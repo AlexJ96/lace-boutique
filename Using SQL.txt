@@ -1,0 +1,22 @@
+Using SQL
+
+API.getHibernateQuery().saveObject(object);
+					   .deleteObject(object);
+					   .saveOrUpdateObject(object);
+					   .getObject(new Object(), id);
+					   
+Refer to API class for example test versions until any are officially developed.
+
+Create the object class in 'api.sql.hibernate.entities' - refer to User.java for examples they map to the object in the database.
+Add the object reference in 'hibernate.cfg.xml' so it can be used.
+
+Each object will need to have an 'id' which is auto incremented via the SQL table, this allows for us to use the calls above, to getObject
+With the getObject method we can then use the returning object to modify, either save/update or delete via the other calls.
+
+To edit a row in a table;
+Example: 
+Users Table - Users Object
+
+User user = (User) getObject(new Users(), id) - id = id of the row (auto increment)
+user.setWhatever(whatever);
+saveOrUpdateObject(user);
