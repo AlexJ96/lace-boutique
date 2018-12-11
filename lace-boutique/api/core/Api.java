@@ -1,10 +1,5 @@
 package api.core;
 
-import java.util.Date;
-
-import org.bytedeco.javacpp.*;
-import org.bytedeco.javacpp.lept.*;
-import org.bytedeco.javacpp.tesseract.*;
 import org.hibernate.SessionFactory;
 
 import api.endpoint.EndPoint;
@@ -12,7 +7,12 @@ import api.endpoint.endpoints.AuthToken;
 import api.endpoint.endpoints.TestEndPoint;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.HibernateSession;
-import api.sql.hibernate.entities.User;
+import api.sql.hibernate.entities.Account;
+import api.sql.hibernate.entities.Item;
+import api.sql.hibernate.entities.ItemImage;
+import api.sql.hibernate.entities.ItemSpec;
+import api.sql.hibernate.entities.Wishlist;
+import api.sql.hibernate.entities.WishlistItem;
 
 /**
  * Api Initializer - Sets up all API Endpoints
@@ -35,7 +35,7 @@ public class Api {
 		initializeEndPoints();
 		initializeHibernateSession();
 		//testAddUser();
-		//testGetUser();
+		testGetUser();
 		//testDeleteUser();
 	}
 	
@@ -61,28 +61,75 @@ public class Api {
 	}
 	
 	public static void testAddUser() {
-		User user = new User();
-		user.setUsername("Editor 0");
-		user.setCreatedBy("Administrator");
-		user.setCreatedDate(new Date());
-
-		hibernateQuery.saveObject(user);
+		Account account = new Account();
+		account.setUsername("AlexJ");
+		account.setEmail("email@email.com");
+		account.setCanEmail(true);
+		account.setPassword("password");
+		
+		hibernateQuery.saveObject(account);
+		
+		Wishlist wishList = new Wishlist();
+		wishList.setAccount(account);
+		
+		hibernateQuery.saveObject(wishList);
+		
+		Item item = new Item();
+		item.setName("Petite Dress");
+		item.setDescription("A Dress designed for petite ladies");
+		item.setPrice(49.99);
+		item.setBrand("Designer Dresses");
+		item.setCategory("Dresses");
+		
+		hibernateQuery.saveObject(item);
+		
+		ItemSpec itemSpec = new ItemSpec();
+		itemSpec.setItem(item);
+		itemSpec.setQuantity(100);
+		itemSpec.setSize("XXL");
+		
+		hibernateQuery.saveObject(itemSpec);
+		
+		ItemImage itemImage = new ItemImage();
+		itemImage.setItem(item);
+		itemImage.setColour("Blue");
+		itemImage.setUrl("www.google.co.uk");
+		
+		hibernateQuery.saveObject(itemImage);
+		
+		WishlistItem wishItem = new WishlistItem();
+		wishItem.setWishlist(wishList);
+		wishItem.setItem(item);
+		
+		hibernateQuery.saveObject(wishItem);
 	}
 	
 	public static void testGetUser() {
-		User user = (User) hibernateQuery.getObject(new User(), 0);
-		if (user != null) 
-			System.out.println(user.getUsername());
-		else
-			System.out.println("User is null");
+		Account account = (Account) hibernateQuery.getObject(new Account(), 1);
+		System.out.println(account.toString());
+
+		Wishlist wishlist = (Wishlist) hibernateQuery.getObject(new Wishlist(), account.getId());
+		System.out.println(wishlist.toString());
+
+		WishlistItem wishItem = (WishlistItem) hibernateQuery.getObject(new WishlistItem(), wishlist.getId());
+		System.out.println(wishItem.toString());
+		
+		Item item = wishItem.getItem();
+		System.out.println(item.toString());
+		
+		ItemSpec itemSpec = (ItemSpec) hibernateQuery.getObject(new ItemSpec(), item.getId());
+		System.out.println(itemSpec.toString());
+		
+		ItemImage itemImage = (ItemImage) hibernateQuery.getObject(new ItemImage(), item.getId());
+		System.out.println(itemImage.toString());
 	}
 	
 	public static void testDeleteUser() {
-		User user = (User) hibernateQuery.getObject(new User(), 0);
+		/*User user = (User) hibernateQuery.getObject(new User(), 0);
 		if (user != null)
 			hibernateQuery.deleteObject(user);
 		else 
-			System.out.println("User is null");
+			System.out.println("User is null");*/
 	}
 
 }
