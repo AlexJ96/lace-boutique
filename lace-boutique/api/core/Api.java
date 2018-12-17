@@ -3,6 +3,7 @@ package api.core;
 import org.hibernate.SessionFactory;
 
 import api.endpoint.EndPoint;
+import api.endpoint.endpoints.AccountEndPoint;
 import api.endpoint.endpoints.AuthToken;
 import api.endpoint.endpoints.TestEndPoint;
 import api.sql.hibernate.HibernateQuery;
@@ -27,7 +28,11 @@ public class Api {
 	private static SessionFactory sessionFactory;
 	private static HibernateQuery hibernateQuery;
 	
-	private static EndPoint[] endPoints = { new TestEndPoint(), new AuthToken() };
+	private static EndPoint[] endPoints = { 
+			new TestEndPoint(), 
+			new AuthToken(),
+			new AccountEndPoint()
+			};
 	private static String basePath = "/laceApi";
 
 	public static void main(String[] args) {
