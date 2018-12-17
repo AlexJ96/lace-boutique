@@ -10,24 +10,27 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "item_image")
-public class ItemImage {
+@Table(name = "order_item")
+public class OrderItem {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name = "id")
 	private int id;
+	
+	@OneToOne
+	@JoinColumn(name = "order_id")
+	private Order order;
 
 	@OneToOne
 	@JoinColumn(name = "item_id")
 	private Item item;
-
-	@OneToOne
-	@JoinColumn(name = "colour_id")
-	private Colour colour;
-
-	@Column(name = "url")
-	private String url;
+	
+	@Column(name = "item_amount")
+	private int itemAmount;
+	
+	@Column(name = "item_total")
+	private double itemTotal;
 
 	public int getId() {
 		return id;
@@ -35,6 +38,14 @@ public class ItemImage {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public Order getOrder() {
+		return order;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
 	}
 
 	public Item getItem() {
@@ -45,25 +56,26 @@ public class ItemImage {
 		this.item = item;
 	}
 
-	public Colour getColour() {
-		return colour;
+	public int getItemAmount() {
+		return itemAmount;
 	}
 
-	public void setColour(Colour colour) {
-		this.colour = colour;
+	public void setItemAmount(int itemAmount) {
+		this.itemAmount = itemAmount;
 	}
 
-	public String getUrl() {
-		return url;
+	public double getItemTotal() {
+		return itemTotal;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setItemTotal(double itemTotal) {
+		this.itemTotal = itemTotal;
 	}
 
 	@Override
 	public String toString() {
-		return "ItemImage [id=" + id + ", item=" + item + ", colour=" + colour + ", url=" + url + "]";
+		return "OrderItem [id=" + id + ", order=" + order + ", item=" + item + ", itemAmount=" + itemAmount
+				+ ", itemTotal=" + itemTotal + "]";
 	}
-
+	
 }

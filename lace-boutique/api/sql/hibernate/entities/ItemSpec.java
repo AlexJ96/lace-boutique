@@ -21,10 +21,10 @@ public class ItemSpec {
 	@OneToOne
 	@JoinColumn(name = "item_id")
 	private Item item;
-	
-	//Seperate to table??
-	@Column(name = "size")
-	private String size;
+
+	@OneToOne
+	@JoinColumn(name = "size_id")
+	private Size size;
 
 	@Column(name = "quantity")
 	private int quantity;
@@ -45,11 +45,11 @@ public class ItemSpec {
 		this.item = item;
 	}
 
-	public String getSize() {
+	public Size getSize() {
 		return size;
 	}
 
-	public void setSize(String size) {
+	public void setSize(Size size) {
 		this.size = size;
 	}
 

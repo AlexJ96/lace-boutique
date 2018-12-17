@@ -1,7 +1,6 @@
 package api.sql.hibernate;
 
 import org.hibernate.Session;
-
 import api.core.Api;
 
 public class HibernateQuery {
@@ -95,5 +94,4 @@ public class HibernateQuery {
 			closeSession();
 		}
 	}
-
 }

@@ -1,5 +1,7 @@
 package api.core;
 
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 
 import api.endpoint.EndPoint;
@@ -8,6 +10,7 @@ import api.endpoint.endpoints.AuthToken;
 import api.endpoint.endpoints.TestEndPoint;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.HibernateSession;
+import api.sql.hibernate.dto.AccountDTO;
 import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Item;
 import api.sql.hibernate.entities.ItemImage;
@@ -40,8 +43,9 @@ public class Api {
 		initializeEndPoints();
 		initializeHibernateSession();
 		//testAddUser();
-		testGetUser();
+		//testGetUser();
 		//testDeleteUser();
+		testGetSearch();
 	}
 	
 	private static void initializeEndPoints() {
@@ -63,6 +67,12 @@ public class Api {
 	
 	public static HibernateQuery getHibernateQuery() {
 		return hibernateQuery;
+	}
+	
+	private static void testGetSearch() {
+//		Account account = AccountDTO.getAccountByUsername("AlexJ");
+		List<Account> accounts = AccountDTO.getAllAccounts();
+		System.out.println(accounts.size());
 	}
 	
 	public static void testAddUser() {
@@ -91,13 +101,13 @@ public class Api {
 		ItemSpec itemSpec = new ItemSpec();
 		itemSpec.setItem(item);
 		itemSpec.setQuantity(100);
-		itemSpec.setSize("XXL");
+		itemSpec.setSize(null);//new Size()
 		
 		hibernateQuery.saveObject(itemSpec);
 		
 		ItemImage itemImage = new ItemImage();
 		itemImage.setItem(item);
-		itemImage.setColour("Blue");
+		itemImage.setColour(null);//new Colour()
 		itemImage.setUrl("www.google.co.uk");
 		
 		hibernateQuery.saveObject(itemImage);
