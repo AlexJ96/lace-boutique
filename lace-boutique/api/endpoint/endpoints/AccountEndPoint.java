@@ -25,6 +25,7 @@ public class AccountEndPoint implements EndPoint {
 	@Override
 	public void configure(Service spark, String basePath) {
 		spark.path(basePath + "/account", () -> {
+			
 			spark.post("/register", (request, response) -> {
 				System.out.println(request.body());
 				
@@ -65,6 +66,48 @@ public class AccountEndPoint implements EndPoint {
 			    	return Utils.getJsonBuilder().toJson("Cannot create a new account! Please try again later");
 			    }
 			});
+			
+			spark.post("/login", (request, response) -> {
+				System.out.println(request.body());
+				
+				String data = request.body();
+				
+				JsonElement jelement = new JsonParser().parse(data);
+			    JsonObject  jobject = jelement.getAsJsonObject();
+			    
+			    String email = Utils.getJsonFieldAsString(jobject, "email");
+			    String confirmedEmail = Utils.getJsonFieldAsString(jobject, "confirmEmail");
+			    
+			    if(!email.equals(confirmedEmail)){
+			    	return Utils.getJsonBuilder().toJson("Emails are not the same.");
+			    }
+			    
+			    String password = Utils.getJsonFieldAsString(jobject, "password");
+			    String confirmedPassword = Utils.getJsonFieldAsString(jobject, "confirmPassword");
+			    
+			    if(!password.equals(confirmedPassword)){
+			    	return Utils.getJsonBuilder().toJson("Passwords are not the same.");
+			    }
+			    
+			    String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(10));
+			    
+			    String canEmail = Utils.getJsonFieldAsString(jobject, "subscription");
+			    
+			    Account account = new Account();
+			    account.setEmail(email);
+			    
+			    account.setPassword(hashedPassword);
+			    account.setCanEmail( StringUtil.isNotBlank(canEmail) );
+			    
+			    if(hibernateQuery.saveObject(account)){
+			    	System.out.println("Success");
+			    	return Utils.getJsonBuilder().toJson("Done");
+			    }else{
+			    	System.out.println("Failed");
+			    	return Utils.getJsonBuilder().toJson("Cannot create a new account! Please try again later");
+			    }
+			});
+			
 		});
 	}
 	

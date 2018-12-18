@@ -66,13 +66,13 @@ public class HibernateQuery {
 	}
 	
 	@SuppressWarnings("finally")
-	public Object getObject(Object object, Integer id) {
+	public Object getObject(Class clazz, Integer id) {
 		Object returnObject = null;
 		try {
 			openSession();
 			beginTransaction();
 			
-			returnObject = session.get(object.getClass(), id);
+			returnObject = session.get(clazz, id);
 			
 			commitTransaction();
 		} catch (Exception e) {
