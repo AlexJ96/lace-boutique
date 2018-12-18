@@ -27,7 +27,8 @@ public class HibernateQuery {
 		session.close();
 	}
 	
-	public void saveObject(Object object) {
+	public boolean saveObject(Object object) {
+		boolean result = false;
 		try {
 			openSession();
 			beginTransaction();
@@ -35,15 +36,18 @@ public class HibernateQuery {
 			session.save(object);
 			
 			commitTransaction();
+			result = true;
 		} catch (Exception e) {
 			rollBackTransaction();
 			System.out.println(e.getMessage());
 		} finally {
 			closeSession();
 		}
+		return result;
 	}	
 	
-	public void saveOrUpdateObject(Object object) {
+	public boolean saveOrUpdateObject(Object object) {
+		boolean result = false;
 		try {
 			openSession();
 			beginTransaction();
@@ -51,12 +55,14 @@ public class HibernateQuery {
 			session.saveOrUpdate(object);
 			
 			commitTransaction();
+			result = true;
 		} catch (Exception e) {
 			rollBackTransaction();
 			System.out.println(e.getMessage());
 		} finally {
 			closeSession();
 		}
+		return result;
 	}
 	
 	@SuppressWarnings("finally")
