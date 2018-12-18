@@ -120,22 +120,22 @@ public class Api {
 	}
 	
 	public static void testGetUser() {
-		Account account = (Account) hibernateQuery.getObject(new Account(), 1);
+		Account account = (Account) hibernateQuery.getObject(Account.class, 1);
 		System.out.println(account.toString());
 
-		Wishlist wishlist = (Wishlist) hibernateQuery.getObject(new Wishlist(), account.getId());
+		Wishlist wishlist = (Wishlist) hibernateQuery.getObject(Wishlist.class, account.getId());
 		System.out.println(wishlist.toString());
 
-		WishlistItem wishItem = (WishlistItem) hibernateQuery.getObject(new WishlistItem(), wishlist.getId());
+		WishlistItem wishItem = (WishlistItem) hibernateQuery.getObject(WishlistItem.class, wishlist.getId());
 		System.out.println(wishItem.toString());
 		
 		Item item = wishItem.getItem();
 		System.out.println(item.toString());
 		
-		ItemSpec itemSpec = (ItemSpec) hibernateQuery.getObject(new ItemSpec(), item.getId());
+		ItemSpec itemSpec = (ItemSpec) hibernateQuery.getObject(ItemSpec.class, item.getId());
 		System.out.println(itemSpec.toString());
 		
-		ItemImage itemImage = (ItemImage) hibernateQuery.getObject(new ItemImage(), item.getId());
+		ItemImage itemImage = (ItemImage) hibernateQuery.getObject(ItemImage.class, item.getId());
 		System.out.println(itemImage.toString());
 	}
 	
