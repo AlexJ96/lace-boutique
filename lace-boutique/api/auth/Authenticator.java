@@ -103,6 +103,7 @@ public class Authenticator {
             TokenInfo t = new TokenInfo();
             String issuer = payload.getAsJsonPrimitive("iss").getAsString();
             String userIdString =  payload.getAsJsonObject("info").getAsJsonPrimitive("clientId").getAsString();
+            String accountJson = payload.getAsJsonObject("info").getAsJsonPrimitive("account").getAsString();
             if (issuer.equals(ISSUER) && !StringUtils.isBlank(userIdString))
             {
                 t.setUserId(new ObjectId(userIdString));
