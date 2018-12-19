@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 
+import api.sql.hibernate.entities.Account;
 import net.oauth.jsontoken.JsonToken;
 import net.oauth.jsontoken.JsonTokenParser;
 import net.oauth.jsontoken.crypto.HmacSHA256Signer;
@@ -55,6 +56,7 @@ public class Authenticator {
         
         JsonObject request = new JsonObject();
         request.addProperty("clientId", clientId);
+        request.addProperty("account", "");
 
         JsonObject payload = token.getPayloadAsJsonObject();
         payload.add("info", request);
