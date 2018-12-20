@@ -17,6 +17,7 @@ import api.sql.hibernate.entities.ItemImage;
 import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.Wishlist;
 import api.sql.hibernate.entities.WishlistItem;
+import api.utils.SecureUtils;
 
 /**
  * Api Initializer - Sets up all API Endpoints
@@ -45,7 +46,8 @@ public class Api {
 		//testAddUser();
 		//testGetUser();
 		//testDeleteUser();
-		testGetSearch();
+		//testGetSearch();
+		testPasswordValidator();
 	}
 	
 	private static void initializeEndPoints() {
@@ -145,6 +147,13 @@ public class Api {
 			hibernateQuery.deleteObject(user);
 		else 
 			System.out.println("User is null");*/
+	}
+	
+	public static void testPasswordValidator(){
+		System.out.println(SecureUtils.validatePassword("Test with your own password lol") ? "Valid" : "Invalid");
+		System.out.println(SecureUtils.validatePassword("123") ? "Valid" : "Invalid");
+		System.out.println(SecureUtils.validatePassword("12345678") ? "Valid" : "Invalid");
+		System.out.println(SecureUtils.validatePassword("12312312123123121231231212312312") ? "Valid" : "Invalid");
 	}
 
 }

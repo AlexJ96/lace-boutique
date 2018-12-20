@@ -1,6 +1,5 @@
 package api.endpoint.endpoints;
 
-import org.eclipse.jetty.util.StringUtil;
 import org.mindrot.jbcrypt.BCrypt;
 
 import com.google.gson.JsonArray;
@@ -13,6 +12,7 @@ import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.dto.AccountDTO;
 import api.sql.hibernate.entities.Account;
 import api.utils.SecureUtils;
+import api.utils.StringUtils;
 import api.utils.Utils;
 import spark.Service;
 
@@ -38,15 +38,27 @@ public class AccountEndPoint implements EndPoint {
 			    String email = Utils.getJsonFieldAsString(jobject, "email");
 			    String confirmedEmail = Utils.getJsonFieldAsString(jobject, "confirmEmail");
 			    
+			    if(StringUtils.isBlank(email, confirmedEmail)){
+			    	return Utils.getJsonBuilder().toJson("Please enter a valid email address");
+			    }
+			    
 			    if(!email.equals(confirmedEmail)){
-			    	return Utils.getJsonBuilder().toJson("Emails are not the same.");
+			    	return Utils.getJsonBuilder().toJson("Emails are not the same");
 			    }
 			    
 			    String password = Utils.getJsonFieldAsString(jobject, "password");
 			    String confirmedPassword = Utils.getJsonFieldAsString(jobject, "confirmPassword");
 			    
+			    if(StringUtils.isBlank(password, confirmedPassword)){
+			    	return Utils.getJsonBuilder().toJson("Please enter a valid password");
+			    }
+			    
+			    if(!SecureUtils.validatePassword(password)){
+			    	return Utils.getJsonBuilder().toJson("Please select a more secured password");
+			    }
+			    
 			    if(!password.equals(confirmedPassword)){
-			    	return Utils.getJsonBuilder().toJson("Passwords are not the same.");
+			    	return Utils.getJsonBuilder().toJson("Passwords are not the same");
 			    }
 			    
 			    String hashedPassword = SecureUtils.bCrypt10Password(password);
@@ -57,7 +69,7 @@ public class AccountEndPoint implements EndPoint {
 			    account.setEmail(email);
 			    
 			    account.setPassword(hashedPassword);
-			    account.setCanEmail( StringUtil.isNotBlank(canEmail) );
+			    account.setCanEmail( StringUtils.isNotBlank(canEmail) );
 			    
 			    if(hibernateQuery.saveObject(account)){
 			    	System.out.println("Success");
@@ -78,15 +90,18 @@ public class AccountEndPoint implements EndPoint {
 			    String email = Utils.getJsonFieldAsString(jobject, "email");
 			    String password = Utils.getJsonFieldAsString(jobject, "password");
 				
+			    if(StringUtils.isBlank(email, password)){
+			    	return Utils.getJsonBuilder().toJson("Please enter both email and password");
+			    }
+			    
 			    Account account = AccountDTO.getAccountByEmail(email);
 			    if(account == null){
 			    	return Utils.getJsonBuilder().toJson("Invalid email or password");
 			    }
-			    String hashedPassword = SecureUtils.bCrypt10Password(password);
 			    
 			    if(BCrypt.checkpw(password, account.getPassword())){
 			    	System.out.println("Login Success");
-			    	return Utils.getJsonBuilder().toJson("Success");
+			    	return Utils.getJsonBuilder().toJson("Done");
 			    }else{
 			    	System.out.println("Login Failed");
 			    	return Utils.getJsonBuilder().toJson("Invalid email or password");
