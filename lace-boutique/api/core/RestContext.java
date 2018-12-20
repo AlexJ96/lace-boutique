@@ -46,7 +46,7 @@ public class RestContext {
             response.header("Access-Control-Allow-Origin", "*");
             response.header("Access-Control-Allow-Headers", "Content-Type, LBT");
             
-            if (!request.url().equalsIgnoreCase(url + basePath + "/token/request-token")) {
+            if (!request.url().equalsIgnoreCase(url + basePath + "/token/request-token") && !request.url().equalsIgnoreCase(url + basePath + "/token/refresh-token")) {
 	            String token = request.headers("LBT");
 				int responseId = Authenticator.validateAuthToken(token);
 				

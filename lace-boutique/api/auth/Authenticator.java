@@ -10,9 +10,12 @@ import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import api.core.Api;
 import api.sql.hibernate.entities.Account;
+import api.utils.Utils;
 import net.oauth.jsontoken.JsonToken;
 import net.oauth.jsontoken.JsonTokenParser;
 import net.oauth.jsontoken.crypto.HmacSHA256Signer;
@@ -30,7 +33,12 @@ public class Authenticator {
 
     private static final String SIGNING_KEY = ";Sd`o#xO8t('/<8R=8e+^#0RY.%=vGgXV|B+V$wOj*STlY47RaMayolpaj&t$Z*1J_3__a:A5*d/E=?Uf0Y=>[8]YYn>uhr1BNA:R}eyL57ITn_22%ZFB^*";
     
+    
     public static String generateWebToken(String clientId, Long duration) {
+    	return generateWebToken(clientId, duration, null);
+    }
+    
+    public static String generateWebToken(String clientId, Long duration, Account account) {
     	/*
     	 * Get Current Calender Instance
     	 */
@@ -56,7 +64,7 @@ public class Authenticator {
         
         JsonObject request = new JsonObject();
         request.addProperty("clientId", clientId);
-        request.addProperty("account", "");
+        request.addProperty("account", account != null ? Utils.getJsonBuilder().toJson(account) : "");
 
         JsonObject payload = token.getPayloadAsJsonObject();
         payload.add("info", request);
@@ -66,6 +74,21 @@ public class Authenticator {
         } catch (SignatureException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    public static String refreshToken(String token) {
+    	Account account = getAccountFromToken(token);
+    	if (account != null) {
+    		account = (Account) Api.getHibernateQuery().getObject(Account.class, account.getId());
+    		return generateWebToken(new ObjectId().toString(), 1L, account);
+    	} else {
+    		return generateWebToken(new ObjectId().toString(), 1L);
+    	}
+    }
+    
+    private static Account getAccountFromToken(String token) {
+    	TokenInfo tokenInfo = verifyToken(token);
+    	return tokenInfo.getAccount();
     }
 
 
@@ -103,7 +126,15 @@ public class Authenticator {
             TokenInfo t = new TokenInfo();
             String issuer = payload.getAsJsonPrimitive("iss").getAsString();
             String userIdString =  payload.getAsJsonObject("info").getAsJsonPrimitive("clientId").getAsString();
+            
+            //Storing Account in the Token
             String accountJson = payload.getAsJsonObject("info").getAsJsonPrimitive("account").getAsString();
+            if (StringUtils.isNotBlank(accountJson)) {
+                Account account = new Gson().fromJson(accountJson, Account.class);
+                t.setAccount(account);
+            }
+            
+        
             if (issuer.equals(ISSUER) && !StringUtils.isBlank(userIdString))
             {
                 t.setUserId(new ObjectId(userIdString));

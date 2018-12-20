@@ -2,8 +2,11 @@ package api.core;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.hibernate.SessionFactory;
 
+import api.auth.Authenticator;
+import api.auth.TokenInfo;
 import api.endpoint.EndPoint;
 import api.endpoint.endpoints.AccountEndPoint;
 import api.endpoint.endpoints.AuthToken;
@@ -47,7 +50,8 @@ public class Api {
 		//testGetUser();
 		//testDeleteUser();
 		//testGetSearch();
-		testPasswordValidator();
+		//testPasswordValidator();
+		//testAccountToken();
 	}
 	
 	private static void initializeEndPoints() {
@@ -154,6 +158,16 @@ public class Api {
 		System.out.println(SecureUtils.validatePassword("123") ? "Valid" : "Invalid");
 		System.out.println(SecureUtils.validatePassword("12345678") ? "Valid" : "Invalid");
 		System.out.println(SecureUtils.validatePassword("12312312123123121231231212312312") ? "Valid" : "Invalid");
+	}
+	
+	public static void testAccountToken() {
+		Account account = (Account) hibernateQuery.getObject(Account.class, 1);
+		String token = Authenticator.generateWebToken(new ObjectId().toString(), 1L);
+		System.out.println(token);
+		TokenInfo tokenInfo = Authenticator.verifyToken(token);
+		if (tokenInfo.getAccount() != null) {
+			System.out.println(tokenInfo.getAccount().toString());
+		}
 	}
 
 }
