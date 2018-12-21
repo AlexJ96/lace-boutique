@@ -29,5 +29,13 @@ public class StringUtils {
 		return true;
 	}
 	
+
+    
+    public static String changeCharInPosition(int position, String ch, String str){
+        char[] charArray = str.toCharArray();
+        charArray[position] = ch.charAt(0);
+        return new String(charArray);
+    }
+	
 	
 }

@@ -5,16 +5,18 @@ import java.security.SignatureException;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import api.core.Api;
 import api.sql.hibernate.entities.Account;
+import api.utils.StringUtils;
 import api.utils.Utils;
 import net.oauth.jsontoken.JsonToken;
 import net.oauth.jsontoken.JsonTokenParser;
@@ -61,6 +63,7 @@ public class Authenticator {
         token.setAudience(AUDIENCE);
         token.setIssuedAt(new org.joda.time.Instant(cal.getTimeInMillis()));
         token.setExpiration(new org.joda.time.Instant(cal.getTimeInMillis() + 1000L * 60L * 60L * 24L * duration));
+        //token.setExpiration(new org.joda.time.Instant(cal.getTimeInMillis() + 1000L));
         
         JsonObject request = new JsonObject();
         request.addProperty("clientId", clientId);
@@ -76,8 +79,13 @@ public class Authenticator {
         }
     }
     
-    public static String refreshToken(String token) {
-    	Account account = getAccountFromToken(token);
+    public static String refreshToken(String accountBody) {
+		JsonElement accountElement = new JsonParser().parse(accountBody);
+	    JsonObject  accountObject = accountElement.getAsJsonObject();
+	    
+	    String accountJson = Utils.getJsonFieldAsString(accountObject, "Account");
+	    Account account = new Gson().fromJson(accountJson, Account.class);
+	    
     	if (account != null) {
     		account = (Account) Api.getHibernateQuery().getObject(Account.class, account.getId());
     		return generateWebToken(new ObjectId().toString(), 1L, account);
@@ -85,12 +93,6 @@ public class Authenticator {
     		return generateWebToken(new ObjectId().toString(), 1L);
     	}
     }
-    
-    private static Account getAccountFromToken(String token) {
-    	TokenInfo tokenInfo = verifyToken(token);
-    	return tokenInfo.getAccount();
-    }
-
 
     public static TokenInfo verifyToken(String token)  
     {
