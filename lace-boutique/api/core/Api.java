@@ -10,6 +10,7 @@ import api.auth.TokenInfo;
 import api.endpoint.EndPoint;
 import api.endpoint.endpoints.AccountEndPoint;
 import api.endpoint.endpoints.AuthToken;
+import api.endpoint.endpoints.ShopEndPoint;
 import api.endpoint.endpoints.TestEndPoint;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.HibernateSession;
@@ -38,7 +39,8 @@ public class Api {
 	private static EndPoint[] endPoints = { 
 			new TestEndPoint(), 
 			new AuthToken(),
-			new AccountEndPoint()
+			new AccountEndPoint(),
+			new ShopEndPoint()
 			};
 	private static String basePath = "/laceApi";
 
