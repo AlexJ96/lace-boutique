@@ -28,7 +28,11 @@ public class ItemSpec {
 
 	@Column(name = "quantity")
 	private int quantity;
-
+	
+	@OneToOne
+	@JoinColumn(name = "colour_id")
+	private Colour colour;
+	
 	public int getId() {
 		return id;
 	}
@@ -61,9 +65,18 @@ public class ItemSpec {
 		this.quantity = quantity;
 	}
 
+	public Colour getColour() {
+		return colour;
+	}
+
+	public void setColour(Colour colour) {
+		this.colour = colour;
+	}
+
 	@Override
 	public String toString() {
-		return "ItemSpec [id=" + id + ", item=" + item + ", size=" + size + ", quantity=" + quantity + "]";
+		return "ItemSpec [id=" + id + ", item=" + item + ", size=" + size + ", quantity=" + quantity + ", colour="
+				+ colour + "]";
 	}
 	
 }

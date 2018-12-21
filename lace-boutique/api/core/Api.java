@@ -16,9 +16,11 @@ import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.HibernateSession;
 import api.sql.hibernate.dto.AccountDTO;
 import api.sql.hibernate.entities.Account;
+import api.sql.hibernate.entities.Colour;
 import api.sql.hibernate.entities.Item;
 import api.sql.hibernate.entities.ItemImage;
 import api.sql.hibernate.entities.ItemSpec;
+import api.sql.hibernate.entities.Size;
 import api.sql.hibernate.entities.Wishlist;
 import api.sql.hibernate.entities.WishlistItem;
 import api.utils.SecureUtils;
@@ -48,7 +50,7 @@ public class Api {
 		restContext = new RestContext(8080, basePath);
 		initializeEndPoints();
 		initializeHibernateSession();
-		//testAddUser();
+		testAddUser();
 		//testGetUser();
 		//testDeleteUser();
 		//testGetSearch();
@@ -109,13 +111,15 @@ public class Api {
 		ItemSpec itemSpec = new ItemSpec();
 		itemSpec.setItem(item);
 		itemSpec.setQuantity(100);
-		itemSpec.setSize(null);//new Size()
+		itemSpec.setSize((Size) hibernateQuery.getObject(Size.class, 1));
+		itemSpec.setColour((Colour) hibernateQuery.getObject(Colour.class, 1));
 		
 		hibernateQuery.saveObject(itemSpec);
 		
 		ItemImage itemImage = new ItemImage();
+		itemImage.setColour((Colour) hibernateQuery.getObject(Colour.class, 1));
 		itemImage.setItem(item);
-		itemImage.setColour(null);//new Colour()
+		itemImage.setDefaultImage(true);
 		itemImage.setUrl("www.google.co.uk");
 		
 		hibernateQuery.saveObject(itemImage);
