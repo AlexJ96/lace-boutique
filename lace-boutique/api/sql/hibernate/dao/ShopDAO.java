@@ -216,6 +216,7 @@ public class ShopDAO {
 	 * filters key only accept CATEGORY, SIZE AND COLOUR.
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public static List<ItemImage> getItemImage(Map<String, List<String>> filters){
 		Set<String> keys = filters.keySet();
 		for(String k : keys){
@@ -284,7 +285,7 @@ public class ShopDAO {
 		// I wanted to do that for you but I can't come up with a good name for the new key lol
 		
 		List<String> isCategoryPage = filters.get("?NAMEIT?");  // <-- when you provide nothing,  you will have only the default images.
-		if(isCategoryPage.isEmpty()){
+		if(isCategoryPage == null || isCategoryPage.isEmpty()){
 			criteria2.add(Restrictions.eq("defaultImage", true));
 		}
 		
@@ -304,6 +305,7 @@ public class ShopDAO {
 	 * @param filters
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static List<FilterDTO> getFilters(Map<String, List<String>> filters){
 		Set<String> keys = filters.keySet();
 		for(String k : keys){
@@ -321,38 +323,41 @@ public class ShopDAO {
 		
 		criteria.add(Restrictions.eq("item.category", category.get(0)));
 		
+		ProjectionList p1=Projections.projectionList();
+		
 		if(filters.get("SIZE") != null){
-			ProjectionList p1=Projections.projectionList();
 	        p1.add(Projections.groupProperty("size.size"));
 	        p1.add(Projections.count("size.size"));	
-			
-			criteria.setProjection(p1);
-			
-			List<Object[]> result = criteria.list();
-			if(result.isEmpty()){
-				return null;
-			}
-			
-			
-			DTOList<FilterDTO> dtoList = new DTOList();
-			
-			List<FilterDTO> filterDTOs = null;
-			try {
-				filterDTOs = dtoList.getDTOList(FilterDTO.class, result);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}
-			
-			if(filterDTOs.isEmpty()){
-				return null; 
-			}
-			return filterDTOs;
-			
 		}
 		
-		return null;
+		if (filters.get("COLOUR") != null) {
+			p1.add(Projections.groupProperty("colour.colour"));
+			p1.add(Projections.count("colour.colour"));
+		}
+		
+
+		criteria.setProjection(p1);
+			
+		List<Object[]> result = criteria.list();
+		if(result.isEmpty()){
+			return null;
+		}
+		
+		
+		DTOList<FilterDTO> dtoList = new DTOList();
+		
+		List<FilterDTO> filterDTOs = null;
+		try {
+			filterDTOs = dtoList.getDTOList(FilterDTO.class, result);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		if(filterDTOs.isEmpty()){
+			return null; 
+		}
+		return filterDTOs;
 	}
 	
 	

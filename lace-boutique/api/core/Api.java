@@ -55,7 +55,7 @@ public class Api {
 		restContext = new RestContext(8080, basePath);
 		initializeEndPoints();
 		initializeHibernateSession();
-		testAddUser();
+		//testAddUser();
 		//testGetUser();
 		//testDeleteUser();
 		//testGetSearch();
@@ -65,7 +65,7 @@ public class Api {
 //		testShopDTOWithOnlyCategory();
 		
 		List<String> oneSize = new ArrayList();
-		oneSize.add("S"); // @ALEXJ  Change this to XS and you will see the difference
+		oneSize.add("XS"); // @ALEXJ  Change this to XS and you will see the difference
 		List<String> twoSize = new ArrayList();
 		twoSize.add("XS");
 		twoSize.add("S");
@@ -97,7 +97,7 @@ public class Api {
 //		testShopDTOGetItemImageWithCategoryAndColourAndSize(oneSize, oneColour);
 //		testShopDTOGetItemImageWithCategoryAndColourAndSize(oneSize, twoColour);
 //		testShopDTOGetItemImageWithCategoryAndColourAndSize(twoSize, oneColour);
-//		testShopDTOGetItemImageWithCategoryAndColourAndSize(twoSize, twoColour);
+		//testShopDTOGetItemImageWithCategoryAndColourAndSize(twoSize, twoColour);
 		
 		testDTO(oneSize, oneColour);
 		
@@ -302,6 +302,7 @@ public class Api {
 		category.add("Dresses");
 		filters.put("CATEGORY", category);
 		filters.put("SIZE", new ArrayList<String>());
+		filters.put("COLOUR", new ArrayList<String>());
 		
 		List<FilterDTO> result = ShopDAO.getFilters(filters);
 		for(FilterDTO f : result){
