@@ -297,7 +297,13 @@ public class ShopDAO {
 		return itemImage;
 	}
 	
-	
+	/**
+	 * Use this method to display filter list on the website. However,  this method is not completed yet.
+	 * TODO: implement query by colour.
+	 * TODO: correlate query by colour and size.  As count should change together if a user has selected both size and colour.
+	 * @param filters
+	 * @return
+	 */
 	public static List<FilterDTO> getFilters(Map<String, List<String>> filters){
 		Set<String> keys = filters.keySet();
 		for(String k : keys){
