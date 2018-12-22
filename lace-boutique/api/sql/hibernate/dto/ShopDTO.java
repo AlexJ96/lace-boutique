@@ -3,6 +3,7 @@ package api.sql.hibernate.dto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -199,5 +200,43 @@ public class ShopDTO {
 		List<ItemImage> itemImages = criteria.list();
 		return itemImages;
 	}
+	
+	
+	/**
+	 * 
+	 * @param filters
+	 * filters key only accept CATEGORY, SIZE and COLOUR.
+	 * @return
+	 */
+	public static List<ItemImage> getItemImages(Map<String, String> filters){
+		Set<String> keys = filters.keySet();
+		for(String k : keys){
+			if(!StringUtils.equals(k, "SIZE", "CATEGORY", "COLOUR")){
+				return null;
+			}
+		}
+		
+		Criteria criteria = session.createCriteria(ItemImage.class);
+		// Query by category.
+		
+		// @ALEXJ
+		// According to your WEBSITE design, category must not be null, due to the navbar selection 
+		// This ought to be checked for null before invoking this method.
+		// Delete this comment after you've read it.
+		String category = filters.get("CATEGORY");
+		criteria.createAlias("itemImage.item", "item");
+		criteria.add(Restrictions.eq("category", category));
+		
+		// Query by size
+		String size = filters.get("SIZE");
+		if(StringUtils.isNotBlank(size)){
+			
+		}
+		
+		// Query by colour
+		
+		return criteria.list();
+	}
+	
 	
 }

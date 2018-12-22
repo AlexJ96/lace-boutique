@@ -1,5 +1,7 @@
 package api.utils;
 
+import java.util.Collection;
+
 import org.eclipse.jetty.util.StringUtil;
 
 public class StringUtils {
@@ -37,5 +39,21 @@ public class StringUtils {
         return new String(charArray);
     }
 	
-	
+    /**
+     * Logic is OR. If the string equals to any strings, returns true immediately.
+     * @param string
+     * @param strings
+     * @return
+     */
+	public static boolean equals(String string, String...strings ){
+		if(isBlank(string)){
+			return false;
+		}
+		for(String s : strings){
+			if(string.equals(s)){
+				return true;
+			}
+		}
+		return false;
+	}
 }

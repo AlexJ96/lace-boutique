@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import javax.persistence.Table;
 
 @Entity
@@ -18,17 +18,23 @@ public class ItemSpec {
 	@Column(name = "id")
 	private int id;
 
-	@OneToOne
+	// Many ItemSpec to one Item.  
+	// An item can have more than one size/colour combinations.
+	@ManyToOne	
 	@JoinColumn(name = "item_id")
 	private Item item;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "size_id")
 	private Size size;
 
 	@Column(name = "quantity")
 	private int quantity;
 
+	@ManyToOne
+	@JoinColumn(name = "colour_id")
+	private Colour colour;
+	
 	public int getId() {
 		return id;
 	}
@@ -59,6 +65,14 @@ public class ItemSpec {
 
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
+	}
+	
+	public Colour getColour(){
+		return this.colour;
+	}
+	
+	public void setColour(Colour colour){
+		this.colour = colour;
 	}
 
 	@Override

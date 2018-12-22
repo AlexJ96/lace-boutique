@@ -29,6 +29,9 @@ public class ItemImage {
 	@Column(name = "url")
 	private String url;
 
+	@Column(name = "defaultImage")
+	private boolean defaultImage;
+	
 	public int getId() {
 		return id;
 	}
@@ -61,6 +64,14 @@ public class ItemImage {
 		this.url = url;
 	}
 
+	public boolean getDefaultImage(){
+		return this.defaultImage;
+	}
+	
+	public void setDefaultImage(boolean defaultImage){
+		this.defaultImage = defaultImage;
+	}
+	
 	@Override
 	public String toString() {
 		return "ItemImage [id=" + id + ", item=" + item + ", colour=" + colour + ", url=" + url + "]";
