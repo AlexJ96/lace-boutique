@@ -77,7 +77,8 @@ public class ItemSpec {
 
 	@Override
 	public String toString() {
-		return "ItemSpec [id=" + id + ", item=" + item + ", size=" + size + ", quantity=" + quantity + "]";
+		return "ItemSpec [id=" + id + ", item=" + item + ", size=" + size + ", quantity=" + quantity + ", colour="
+				+ colour + "]";
 	}
 	
 }

@@ -28,10 +28,10 @@ public class ItemImage {
 
 	@Column(name = "url")
 	private String url;
-
-	@Column(name = "defaultImage")
-	private boolean defaultImage;
 	
+	@Column(name = "default_image")
+	private boolean defaultImage;
+
 	public int getId() {
 		return id;
 	}
@@ -48,14 +48,6 @@ public class ItemImage {
 		this.item = item;
 	}
 
-	public Colour getColour() {
-		return colour;
-	}
-
-	public void setColour(Colour colour) {
-		this.colour = colour;
-	}
-
 	public String getUrl() {
 		return url;
 	}
@@ -64,17 +56,26 @@ public class ItemImage {
 		this.url = url;
 	}
 
-	public boolean getDefaultImage(){
-		return this.defaultImage;
+	public Colour getColour() {
+		return colour;
 	}
-	
-	public void setDefaultImage(boolean defaultImage){
+
+	public void setColour(Colour colour) {
+		this.colour = colour;
+	}
+
+	public boolean isDefaultImage() {
+		return defaultImage;
+	}
+
+	public void setDefaultImage(boolean defaultImage) {
 		this.defaultImage = defaultImage;
 	}
 	
 	@Override
 	public String toString() {
-		return "ItemImage [id=" + id + ", item=" + item + ", colour=" + colour + ", url=" + url + "]";
+		return "ItemImage [id=" + id + ", item=" + item + ", colour=" + colour + ", url=" + url + ", defaultImage="
+				+ defaultImage + "]";
 	}
 
 }
