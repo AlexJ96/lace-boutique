@@ -1,4 +1,4 @@
-package api.sql.hibernate.dto;
+package api.sql.hibernate.dao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.stat.SessionStatistics;
 
 import api.core.Api;
+import api.sql.hibernate.dto.DTOList;
+import api.sql.hibernate.dto.FilterDTO;
 import api.sql.hibernate.entities.Colour;
 import api.sql.hibernate.entities.Item;
 import api.sql.hibernate.entities.ItemImage;
@@ -21,7 +23,7 @@ import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.Size;
 import api.utils.StringUtils;
 
-public class ShopDTO {
+public class ShopDAO {
 	
 	private static Session session = Api.getSessionFactory().openSession();
 
@@ -296,6 +298,56 @@ public class ShopDTO {
 	}
 	
 	
+	public static List<FilterDTO> getFilters(Map<String, List<String>> filters){
+		Set<String> keys = filters.keySet();
+		for(String k : keys){
+			if(!StringUtils.equals(k, "CATEGORY", "SIZE", "COLOUR")){
+				return null;
+			}
+		}
+		
+		Criteria criteria = session.createCriteria(ItemSpec.class);
+		List<String> category = filters.get("CATEGORY");
+		
+		criteria.createAlias("item", "item");
+		criteria.createAlias("size", "size");
+		criteria.createAlias("colour", "colour");
+		
+		criteria.add(Restrictions.eq("item.category", category.get(0)));
+		
+		if(filters.get("SIZE") != null){
+			ProjectionList p1=Projections.projectionList();
+	        p1.add(Projections.groupProperty("size.size"));
+	        p1.add(Projections.count("size.size"));	
+			
+			criteria.setProjection(p1);
+			
+			List<Object[]> result = criteria.list();
+			if(result.isEmpty()){
+				return null;
+			}
+			
+			
+			DTOList<FilterDTO> dtoList = new DTOList();
+			
+			List<FilterDTO> filterDTOs = null;
+			try {
+				filterDTOs = dtoList.getDTOList(FilterDTO.class, result);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+			
+			if(filterDTOs.isEmpty()){
+				return null; 
+			}
+			return filterDTOs;
+			
+		}
+		
+		return null;
+	}
 	
 	
 	

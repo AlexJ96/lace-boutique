@@ -17,8 +17,9 @@ import api.endpoint.endpoints.ShopEndPoint;
 import api.endpoint.endpoints.TestEndPoint;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.HibernateSession;
-import api.sql.hibernate.dto.AccountDTO;
-import api.sql.hibernate.dto.ShopDTO;
+import api.sql.hibernate.dao.AccountDAO;
+import api.sql.hibernate.dao.ShopDAO;
+import api.sql.hibernate.dto.*;
 import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Colour;
 import api.sql.hibernate.entities.Item;
@@ -86,18 +87,19 @@ public class Api {
 //		testShopDTOWithCategoryAndColourAndSize(twoSize, oneColour);
 //		testShopDTOWithCategoryAndColourAndSize(twoSize, twoColour);
 		
-		testShopDTOGetItemImageWithOnlyCategory();
+//		testShopDTOGetItemImageWithOnlyCategory();
+//		
+//		testShopDTOGetItemImageWithOnlyCategoryAndSize(oneSize);
+//		testShopDTOGetItemImageWithOnlyCategoryAndSize(twoSize);
+//		testShopDTOGetItemImageWithOnlyCategoryAndColour(oneColour);
+//		testShopDTOGetItemImageWithOnlyCategoryAndColour(twoColour);
+//		
+//		testShopDTOGetItemImageWithCategoryAndColourAndSize(oneSize, oneColour);
+//		testShopDTOGetItemImageWithCategoryAndColourAndSize(oneSize, twoColour);
+//		testShopDTOGetItemImageWithCategoryAndColourAndSize(twoSize, oneColour);
+//		testShopDTOGetItemImageWithCategoryAndColourAndSize(twoSize, twoColour);
 		
-		testShopDTOGetItemImageWithOnlyCategoryAndSize(oneSize);
-		testShopDTOGetItemImageWithOnlyCategoryAndSize(twoSize);
-		testShopDTOGetItemImageWithOnlyCategoryAndColour(oneColour);
-		testShopDTOGetItemImageWithOnlyCategoryAndColour(twoColour);
-		
-		testShopDTOGetItemImageWithCategoryAndColourAndSize(oneSize, oneColour);
-		testShopDTOGetItemImageWithCategoryAndColourAndSize(oneSize, twoColour);
-		testShopDTOGetItemImageWithCategoryAndColourAndSize(twoSize, oneColour);
-		testShopDTOGetItemImageWithCategoryAndColourAndSize(twoSize, twoColour);
-		
+		testDTO(oneSize, oneColour);
 		
 	}
 	
@@ -124,7 +126,7 @@ public class Api {
 	
 	private static void testGetSearch() {
 //		Account account = AccountDTO.getAccountByUsername("AlexJ");
-		List<Account> accounts = AccountDTO.getAllAccounts();
+		List<Account> accounts = AccountDAO.getAllAccounts();
 		System.out.println(accounts.size());
 	}
 	
@@ -231,7 +233,7 @@ public class Api {
 		List<String> category = new ArrayList();
 		category.add("Dresses");
 		filters.put("CATEGORY", category);
-		List<ItemImage> images = ShopDTO.getItemImage(filters);
+		List<ItemImage> images = ShopDAO.getItemImage(filters);
 		for(ItemImage i : images){
 			System.out.println(i);
 		}
@@ -243,7 +245,7 @@ public class Api {
 		List<String> category = new ArrayList();
 		category.add("Dresses");
 		filters.put("CATEGORY", category);
-		List<ItemImage> images = ShopDTO.getItemImage(filters);
+		List<ItemImage> images = ShopDAO.getItemImage(filters);
 		for(ItemImage i : images){
 			System.out.println(i);
 		}
@@ -258,7 +260,7 @@ public class Api {
 		
 		filters.put("SIZE", size);
 		
-		List<ItemImage> images = ShopDTO.getItemImage(filters);
+		List<ItemImage> images = ShopDAO.getItemImage(filters);
 		for(ItemImage i : images){
 			System.out.println(i);
 		}
@@ -273,7 +275,7 @@ public class Api {
 		
 		filters.put("COLOUR", colour);
 		
-		List<ItemImage> images = ShopDTO.getItemImage(filters);
+		List<ItemImage> images = ShopDAO.getItemImage(filters);
 		for(ItemImage i : images){
 			System.out.println(i);
 		}
@@ -288,9 +290,22 @@ public class Api {
 		filters.put("COLOUR", colour);
 		filters.put("SIZE", size);
 		
-		List<ItemImage> images = ShopDTO.getItemImage(filters);
+		List<ItemImage> images = ShopDAO.getItemImage(filters);
 		for(ItemImage i : images){
 			System.out.println(i);
+		}
+	}
+	
+	public static void testDTO(List<String> size, List<String> colour){
+		Map<String, List<String>> filters = new HashMap();
+		List<String> category = new ArrayList();
+		category.add("Dresses");
+		filters.put("CATEGORY", category);
+		filters.put("SIZE", new ArrayList<String>());
+		
+		List<FilterDTO> result = ShopDAO.getFilters(filters);
+		for(FilterDTO f : result){
+			System.out.println(f);
 		}
 	}
 

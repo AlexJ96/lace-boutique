@@ -10,7 +10,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import api.endpoint.EndPoint;
-import api.sql.hibernate.dto.ShopDTO;
+import api.sql.hibernate.dao.ShopDAO;
 import api.sql.hibernate.entities.Item;
 import api.utils.StringUtils;
 import api.utils.Utils;
@@ -24,7 +24,7 @@ public class ShopEndPoint implements EndPoint {
 	public void configure(Service spark, String basePath) {
 		spark.path(basePath + "/shop", () -> {
 			spark.get("/all-items", (request, response) -> {
-				List<Item> shopItems = ShopDTO.getAllItems();
+				List<Item> shopItems = ShopDAO.getAllItems();
 				System.out.println(shopItems.size());
 				return Utils.getJsonBuilder().toJson(shopItems);
 			});
@@ -37,7 +37,7 @@ public class ShopEndPoint implements EndPoint {
 			    System.out.println(brand);
 			    
 			    
-				List<Item> shopItems = ShopDTO.getAllItemsByBrand(brand);
+				List<Item> shopItems = ShopDAO.getAllItemsByBrand(brand);
 				System.out.println(shopItems.size());
 				return Utils.getJsonBuilder().toJson(shopItems);
 			});
@@ -75,7 +75,7 @@ public class ShopEndPoint implements EndPoint {
 			    	filter.put("Category", category);
 			    }
 
-			    List<Item> shopItems = ShopDTO.filterItems(filter);
+			    List<Item> shopItems = ShopDAO.filterItems(filter);
 				return Utils.getJsonBuilder().toJson(shopItems);
 			});
 			

@@ -1,4 +1,4 @@
-package api.sql.hibernate.dto;
+package api.sql.hibernate.dao;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import org.hibernate.criterion.Restrictions;
 import api.core.Api;
 import api.sql.hibernate.entities.Account;
 
-public class AccountDTO {
+public class AccountDAO {
 	
 	private static Session session = Api.getSessionFactory().openSession();
 

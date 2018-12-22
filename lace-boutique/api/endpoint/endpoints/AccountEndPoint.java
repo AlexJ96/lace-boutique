@@ -10,7 +10,7 @@ import com.google.gson.JsonParser;
 import api.auth.Authenticator;
 import api.endpoint.EndPoint;
 import api.sql.hibernate.HibernateQuery;
-import api.sql.hibernate.dto.AccountDTO;
+import api.sql.hibernate.dao.AccountDAO;
 import api.sql.hibernate.entities.Account;
 import api.utils.Responses;
 import api.utils.SecureUtils;
@@ -96,7 +96,7 @@ public class AccountEndPoint implements EndPoint {
 			    	return Utils.getJsonBuilder().toJson(Responses.MISSING_EMAIL_OR_PASSWORD.getResponse());
 			    }
 			    
-			    Account account = AccountDTO.getAccountByEmail(email);
+			    Account account = AccountDAO.getAccountByEmail(email);
 			    if(account == null){
 			    	return Utils.getJsonBuilder().toJson(Responses.INVAID_EMAIL_OR_PASSWORD.getResponse());
 			    }
