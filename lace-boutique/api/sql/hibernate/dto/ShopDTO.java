@@ -211,7 +211,7 @@ public class ShopDTO {
 	/**
 	 * 
 	 * @param filters
-	 * filters key only accept CATEGORY, SIZE and COLOUR.
+	 * filters key only accept CATEGORY, SIZE AND COLOUR.
 	 * @return
 	 */
 	public static List<ItemImage> getItemImage(Map<String, List<String>> filters){
@@ -273,7 +273,19 @@ public class ShopDTO {
 		
 		criteria2.add(Restrictions.in("colour.id", colourIDs));
 		criteria2.add(Restrictions.in("item.id", itemIDs));
-		criteria2.add(Restrictions.eq("defaultImage", true));
+		
+		// @AlexJ
+		// I dont know how you are planning to display the product details
+		// When you first click on a navbar,  you display all images of the same category.
+		// When you click on any of the images, I suppose you will go into another page giving your users different choices of colours???
+		// If you want to do it,  you can easily add one more key to the Map<String, List<String>> filters.
+		// I wanted to do that for you but I can't come up with a good name for the new key lol
+		
+		List<String> isCategoryPage = filters.get("?NAMEIT?");  // <-- when you provide nothing,  you will have only the default images.
+		if(isCategoryPage.isEmpty()){
+			criteria2.add(Restrictions.eq("defaultImage", true));
+		}
+		
 		
 		List<ItemImage> itemImage = criteria2.list();
 		if(itemImage.isEmpty()){
