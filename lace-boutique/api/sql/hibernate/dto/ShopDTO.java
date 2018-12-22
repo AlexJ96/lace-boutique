@@ -206,53 +206,14 @@ public class ShopDTO {
 	}
 	
 	
+
+	
 	/**
 	 * 
 	 * @param filters
 	 * filters key only accept CATEGORY, SIZE and COLOUR.
 	 * @return
 	 */
-	public static List<ItemSpec> getItemSpec(Map<String, List<String>> filters){
-		Set<String> keys = filters.keySet();
-		for(String k : keys){
-			if(!StringUtils.equals(k, "SIZE", "CATEGORY", "COLOUR")){
-				return null;
-			}
-		}
-		
-		Criteria criteria = session.createCriteria(ItemSpec.class);
-		// Query by category.
-		
-		// @ALEXJ
-		// According to your WEBSITE design, category must not be null, due to the navbar selection 
-		// This ought to be checked for null before invoking this method.
-		// Delete this comment after you've read it.
-		List<String> category = filters.get("CATEGORY");
-		criteria.createAlias("item", "item");
-		criteria.add(Restrictions.eq("item.category", category.get(0)));
-		
-		// Query by size
-		List<String> size = filters.get("SIZE");
-		if(size != null && StringUtils.isNotBlank(size.toArray(new String[size.size()]))){
-			criteria.createAlias("size", "size");
-			criteria.add(Restrictions.in("size.size", size));
-		}
-		
-		// Query by colour
-		List<String> colour = filters.get("COLOUR");
-		if(colour != null && StringUtils.isNotBlank(colour.toArray(new String[colour.size()]))){
-			criteria.createAlias("colour", "colour");
-			criteria.add(Restrictions.in("colour.colour", colour));
-		}
-		
-		List<ItemSpec> result = criteria.list();
-		if(result.isEmpty()){
-			return null;
-		}
-		return result;
-	}
-	
-	
 	public static List<ItemImage> getItemImage(Map<String, List<String>> filters){
 		Set<String> keys = filters.keySet();
 		for(String k : keys){
