@@ -301,11 +301,23 @@ public class Api {
 		List<String> category = new ArrayList();
 		category.add("Dresses");
 		filters.put("CATEGORY", category);
-		filters.put("SIZE", new ArrayList<String>());
+		
+		List<String> sizeList = new ArrayList<String>();
+		sizeList.add("XS");
+		
+		filters.put("SIZE", sizeList);
 		filters.put("COLOUR", new ArrayList<String>());
 		
-		List<FilterDTO> result = ShopDAO.getFilters(filters);
-		for(FilterDTO f : result){
+		Map<String,List<FilterDTO>> result = ShopDAO.getFilters(filters);
+		List<FilterDTO> colourFilters = result.get("COLOUR_FILTERS");
+		List<FilterDTO> sizeFilters = result.get("SIZE_FILTERS");
+		List<FilterDTO> colourTotal = result.get("COLOUR_TOTAL");
+		List<FilterDTO> sizeTotal = result.get("SIZE_TOTAL");
+		for(FilterDTO f : colourFilters){
+			System.out.println(f);
+		}
+		
+		for(FilterDTO f : sizeFilters){
 			System.out.println(f);
 		}
 	}

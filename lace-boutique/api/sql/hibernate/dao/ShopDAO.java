@@ -1,6 +1,7 @@
 package api.sql.hibernate.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -258,6 +259,7 @@ public class ShopDAO {
 		
         criteria.setProjection(Projections.property("item.id"));
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        
 		List<Integer> itemIDs = criteria.list();
 		if(itemIDs.isEmpty()){
 			return null;
@@ -306,7 +308,10 @@ public class ShopDAO {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static List<FilterDTO> getFilters(Map<String, List<String>> filters){
+	public static Map<String,List<FilterDTO>> getFilters(Map<String, List<String>> filters){
+		
+		Map<String, List<FilterDTO>> result = new HashMap();
+		
 		Set<String> keys = filters.keySet();
 		for(String k : keys){
 			if(!StringUtils.equals(k, "CATEGORY", "SIZE", "COLOUR")){
@@ -323,41 +328,57 @@ public class ShopDAO {
 		
 		criteria.add(Restrictions.eq("item.category", category.get(0)));
 		
+		List<String> sizes = filters.get("SIZE");
+		if(sizes != null && !sizes.isEmpty()){
+			criteria.add(Restrictions.in("size.size", sizes));
+		}
+		
+		List<String> colours = filters.get("COLOUR");
+		if(colours != null && !colours.isEmpty()){
+			criteria.add(Restrictions.in("colour.colour", colours));
+		}
+		
+		
+		
 		ProjectionList p1=Projections.projectionList();
-		
-		if(filters.get("SIZE") != null){
-	        p1.add(Projections.groupProperty("size.size"));
-	        p1.add(Projections.count("size.size"));	
-		}
-		
-		if (filters.get("COLOUR") != null) {
-			p1.add(Projections.groupProperty("colour.colour"));
-			p1.add(Projections.count("colour.colour"));
-		}
-		
-
+		p1.add(Projections.groupProperty("size.size"));
+        p1.add(Projections.countDistinct("item.id"));
 		criteria.setProjection(p1);
-			
-		List<Object[]> result = criteria.list();
-		if(result.isEmpty()){
+        
+        
+		List<Object[]> sizeFilterResult = criteria.list();
+		if(sizeFilterResult.isEmpty()){
 			return null;
 		}
 		
-		
 		DTOList<FilterDTO> dtoList = new DTOList();
 		
-		List<FilterDTO> filterDTOs = null;
+		List<FilterDTO> sizeFilters = null;
 		try {
-			filterDTOs = dtoList.getDTOList(FilterDTO.class, result);
+			sizeFilters = dtoList.getDTOList(FilterDTO.class, sizeFilterResult);
+			result.put("COLOUR_FILTERS", sizeFilters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 		
-		if(filterDTOs.isEmpty()){
-			return null; 
+		ProjectionList p2=Projections.projectionList();
+		p2.add(Projections.groupProperty("colour.colour"));
+		p2.add(Projections.countDistinct("item.id"));
+		
+		criteria.setProjection(null);
+		criteria.setProjection(p2);
+		
+		List<Object[]> colourFilterResult = criteria.list();
+		List<FilterDTO> colourFilters = null;
+		try {
+			colourFilters = dtoList.getDTOList(FilterDTO.class, colourFilterResult);
+			result.put("SIZE_FILTERS", colourFilters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
-		return filterDTOs;
+		return result;
 	}
 	
 	
