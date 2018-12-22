@@ -1,6 +1,9 @@
 package api.core;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bson.types.ObjectId;
 import org.hibernate.SessionFactory;
@@ -15,6 +18,7 @@ import api.endpoint.endpoints.TestEndPoint;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.HibernateSession;
 import api.sql.hibernate.dto.AccountDTO;
+import api.sql.hibernate.dto.ShopDTO;
 import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Colour;
 import api.sql.hibernate.entities.Item;
@@ -56,6 +60,45 @@ public class Api {
 		//testGetSearch();
 		//testPasswordValidator();
 		//testAccountToken();
+		
+//		testShopDTOWithOnlyCategory();
+		
+		List<String> oneSize = new ArrayList();
+		oneSize.add("S"); // @ALEXJ  Change this to XS and you will see the difference
+		List<String> twoSize = new ArrayList();
+		twoSize.add("XS");
+		twoSize.add("S");
+		
+		List<String> oneColour = new ArrayList();
+		oneColour.add("Blue");
+		
+		List<String> twoColour = new ArrayList();
+		twoColour.add("Blue");
+		twoColour.add("Black");
+		
+//		testShopDTOWithOnlyCategoryAndSize(oneSize);
+//		testShopDTOWithOnlyCategoryAndSize(twoSize);
+//		testShopDTOWithOnlyCategoryAndColour(oneColour);
+//		testShopDTOWithOnlyCategoryAndColour(twoColour);
+//		
+//		testShopDTOWithCategoryAndColourAndSize(oneSize, oneColour);
+//		testShopDTOWithCategoryAndColourAndSize(oneSize, twoColour);
+//		testShopDTOWithCategoryAndColourAndSize(twoSize, oneColour);
+//		testShopDTOWithCategoryAndColourAndSize(twoSize, twoColour);
+		
+		testShopDTOGetItemImageWithOnlyCategory();
+		
+		testShopDTOGetItemImageWithOnlyCategoryAndSize(oneSize);
+		testShopDTOGetItemImageWithOnlyCategoryAndSize(twoSize);
+		testShopDTOGetItemImageWithOnlyCategoryAndColour(oneColour);
+		testShopDTOGetItemImageWithOnlyCategoryAndColour(twoColour);
+		
+		testShopDTOGetItemImageWithCategoryAndColourAndSize(oneSize, oneColour);
+		testShopDTOGetItemImageWithCategoryAndColourAndSize(oneSize, twoColour);
+		testShopDTOGetItemImageWithCategoryAndColourAndSize(twoSize, oneColour);
+		testShopDTOGetItemImageWithCategoryAndColourAndSize(twoSize, twoColour);
+		
+		
 	}
 	
 	private static void initializeEndPoints() {
@@ -84,6 +127,9 @@ public class Api {
 		List<Account> accounts = AccountDTO.getAllAccounts();
 		System.out.println(accounts.size());
 	}
+	
+
+	
 	
 	public static void testAddUser() {
 		Account account = new Account();
@@ -173,6 +219,143 @@ public class Api {
 		TokenInfo tokenInfo = Authenticator.verifyToken(token);
 		if (tokenInfo.getAccount() != null) {
 			System.out.println(tokenInfo.getAccount().toString());
+		}
+	}
+	
+	
+	
+	public static void testShopDTOWithOnlyCategory(){
+		System.out.println("Category Test Only");
+		Map<String, List<String>> filters = new HashMap();
+		List<String> category = new ArrayList();
+		category.add("Dresses");
+		filters.put("CATEGORY", category);
+		List<ItemSpec> images = ShopDTO.getItemSpec(filters);
+		for(ItemSpec i : images){
+			System.out.println(i);
+		}
+	}
+	
+	public static void testShopDTOWithOnlyCategoryAndSize(List<String> size){
+		System.out.println("1 Category with "+ size.size() +" size(s) Test Only");
+		Map<String, List<String>> filters = new HashMap();
+		List<String> category = new ArrayList();
+		category.add("Dresses");
+		filters.put("CATEGORY", category);
+		
+		filters.put("SIZE", size);
+		
+		List<ItemSpec> images = ShopDTO.getItemSpec(filters);
+		for(ItemSpec i : images){
+			System.out.println(i);
+		}
+	}
+	
+	public static void testShopDTOWithOnlyCategoryAndColour(List<String> colour){
+		System.out.println("1 Category with "+ colour.size() +" colour(s) Test Only");
+		Map<String, List<String>> filters = new HashMap();
+		List<String> category = new ArrayList();
+		category.add("Dresses");
+		filters.put("CATEGORY", category);
+		
+		filters.put("COLOUR", colour);
+		
+		List<ItemSpec> images = ShopDTO.getItemSpec(filters);
+		for(ItemSpec i : images){
+			System.out.println(i);
+		}
+	}
+	
+	public static void testShopDTOWithCategoryAndColourAndSize(List<String> size, List<String> colour){
+		System.out.println("1 Category with "+ size.size() +" size(s)" + colour.size() +" colour(s) Test.");
+		Map<String, List<String>> filters = new HashMap();
+		List<String> category = new ArrayList();
+		category.add("Dresses");
+		filters.put("CATEGORY", category);
+		filters.put("COLOUR", colour);
+		filters.put("SIZE", size);
+		
+		List<ItemSpec> images = ShopDTO.getItemSpec(filters);
+		for(ItemSpec i : images){
+			System.out.println(i);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static void testShopDTOGetItemImageWithOnlyCategory(){
+		System.out.println("Category Test Only");
+		Map<String, List<String>> filters = new HashMap();
+		List<String> category = new ArrayList();
+		category.add("Dresses");
+		filters.put("CATEGORY", category);
+		List<ItemImage> images = ShopDTO.getItemImage(filters);
+		for(ItemImage i : images){
+			System.out.println(i);
+		}
+	}
+	
+	public static void testShopDTOWGetItemImageithOnlyCategory(){
+		System.out.println("Category Test Only");
+		Map<String, List<String>> filters = new HashMap();
+		List<String> category = new ArrayList();
+		category.add("Dresses");
+		filters.put("CATEGORY", category);
+		List<ItemImage> images = ShopDTO.getItemImage(filters);
+		for(ItemImage i : images){
+			System.out.println(i);
+		}
+	}
+	
+	public static void testShopDTOGetItemImageWithOnlyCategoryAndSize(List<String> size){
+		System.out.println("1 Category with "+ size.size() +" size(s) Test Only");
+		Map<String, List<String>> filters = new HashMap();
+		List<String> category = new ArrayList();
+		category.add("Dresses");
+		filters.put("CATEGORY", category);
+		
+		filters.put("SIZE", size);
+		
+		List<ItemImage> images = ShopDTO.getItemImage(filters);
+		for(ItemImage i : images){
+			System.out.println(i);
+		}
+	}
+	
+	public static void testShopDTOGetItemImageWithOnlyCategoryAndColour(List<String> colour){
+		System.out.println("1 Category with "+ colour.size() +" colour(s) Test Only");
+		Map<String, List<String>> filters = new HashMap();
+		List<String> category = new ArrayList();
+		category.add("Dresses");
+		filters.put("CATEGORY", category);
+		
+		filters.put("COLOUR", colour);
+		
+		List<ItemImage> images = ShopDTO.getItemImage(filters);
+		for(ItemImage i : images){
+			System.out.println(i);
+		}
+	}
+	
+	public static void testShopDTOGetItemImageWithCategoryAndColourAndSize(List<String> size, List<String> colour){
+		System.out.println("1 Category with "+ size.size() +" size(s)" + colour.size() +" colour(s) Test.");
+		Map<String, List<String>> filters = new HashMap();
+		List<String> category = new ArrayList();
+		category.add("Dresses");
+		filters.put("CATEGORY", category);
+		filters.put("COLOUR", colour);
+		filters.put("SIZE", size);
+		
+		List<ItemImage> images = ShopDTO.getItemImage(filters);
+		for(ItemImage i : images){
+			System.out.println(i);
 		}
 	}
 

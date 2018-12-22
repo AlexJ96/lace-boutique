@@ -7,7 +7,11 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.stat.SessionStatistics;
 
 import api.core.Api;
 import api.sql.hibernate.entities.Colour;
@@ -208,7 +212,7 @@ public class ShopDTO {
 	 * filters key only accept CATEGORY, SIZE and COLOUR.
 	 * @return
 	 */
-	public static List<ItemImage> getItemImages(Map<String, String> filters){
+	public static List<ItemSpec> getItemSpec(Map<String, List<String>> filters){
 		Set<String> keys = filters.keySet();
 		for(String k : keys){
 			if(!StringUtils.equals(k, "SIZE", "CATEGORY", "COLOUR")){
@@ -216,27 +220,110 @@ public class ShopDTO {
 			}
 		}
 		
-		Criteria criteria = session.createCriteria(ItemImage.class);
+		Criteria criteria = session.createCriteria(ItemSpec.class);
 		// Query by category.
 		
 		// @ALEXJ
 		// According to your WEBSITE design, category must not be null, due to the navbar selection 
 		// This ought to be checked for null before invoking this method.
 		// Delete this comment after you've read it.
-		String category = filters.get("CATEGORY");
-		criteria.createAlias("itemImage.item", "item");
-		criteria.add(Restrictions.eq("category", category));
+		List<String> category = filters.get("CATEGORY");
+		criteria.createAlias("item", "item");
+		criteria.add(Restrictions.eq("item.category", category.get(0)));
 		
 		// Query by size
-		String size = filters.get("SIZE");
-		if(StringUtils.isNotBlank(size)){
-			
+		List<String> size = filters.get("SIZE");
+		if(size != null && StringUtils.isNotBlank(size.toArray(new String[size.size()]))){
+			criteria.createAlias("size", "size");
+			criteria.add(Restrictions.in("size.size", size));
 		}
 		
 		// Query by colour
+		List<String> colour = filters.get("COLOUR");
+		if(colour != null && StringUtils.isNotBlank(colour.toArray(new String[colour.size()]))){
+			criteria.createAlias("colour", "colour");
+			criteria.add(Restrictions.in("colour.colour", colour));
+		}
 		
-		return criteria.list();
+		List<ItemSpec> result = criteria.list();
+		if(result.isEmpty()){
+			return null;
+		}
+		return result;
 	}
+	
+	
+	public static List<ItemImage> getItemImage(Map<String, List<String>> filters){
+		Set<String> keys = filters.keySet();
+		for(String k : keys){
+			if(!StringUtils.equals(k, "SIZE", "CATEGORY", "COLOUR")){
+				return null;
+			}
+		}
+		
+		Criteria criteria = session.createCriteria(ItemSpec.class);
+		
+		// Query by category.
+		
+		// @ALEXJ
+		// According to your WEBSITE design, category must not be null, due to the navbar selection 
+		// This ought to be checked for null before invoking this method.
+		// Delete this comment after you've read it.
+		List<String> category = filters.get("CATEGORY");
+		
+		criteria.createAlias("item", "item");
+		criteria.createAlias("size", "size");
+		criteria.createAlias("colour", "colour");
+		
+		criteria.add(Restrictions.eq("item.category", category.get(0)));
+		
+		// Query by size
+		List<String> size = filters.get("SIZE");
+		if(size != null && StringUtils.isNotBlank(size.toArray(new String[size.size()]))){
+			criteria.add(Restrictions.in("size.size", size));
+		}
+		
+		// Query by colour
+		List<String> colour = filters.get("COLOUR");
+		if(colour != null && StringUtils.isNotBlank(colour.toArray(new String[colour.size()]))){
+			criteria.add(Restrictions.in("colour.colour", colour));
+		}
+		ProjectionList p1=Projections.projectionList();
+        p1.add(Projections.property("item.id"));
+        p1.add(Projections.property("colour.id"));	
+		
+        criteria.setProjection(Projections.property("item.id"));
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		List<Integer> itemIDs = criteria.list();
+		if(itemIDs.isEmpty()){
+			return null;
+		}
+		
+		criteria.setProjection(null);
+		criteria.setProjection(Projections.property("colour.id"));
+		List<Integer> colourIDs = criteria.list();
+		if(colourIDs.isEmpty()){
+			return null;
+		}
+		
+		Criteria criteria2 = session.createCriteria(ItemImage.class);
+		criteria2.createAlias("item", "item");
+		criteria2.createAlias("colour", "colour");
+		
+		criteria2.add(Restrictions.in("colour.id", colourIDs));
+		criteria2.add(Restrictions.in("item.id", itemIDs));
+		criteria2.add(Restrictions.eq("defaultImage", true));
+		
+		List<ItemImage> itemImage = criteria2.list();
+		if(itemImage.isEmpty()){
+			return null;
+		}
+		
+		return itemImage;
+	}
+	
+	
+	
 	
 	
 }

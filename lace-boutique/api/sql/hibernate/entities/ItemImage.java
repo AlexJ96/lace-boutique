@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import javax.persistence.Table;
 
 @Entity
@@ -22,7 +22,7 @@ public class ItemImage {
 	@JoinColumn(name = "item_id")
 	private Item item;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "colour_id")
 	private Colour colour;
 
