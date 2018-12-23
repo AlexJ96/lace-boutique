@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.CountProjection;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -15,6 +16,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.stat.SessionStatistics;
 
 import api.core.Api;
+import api.sql.hibernate.ProjectionsExtension;
+import api.sql.hibernate.SumProjection;
 import api.sql.hibernate.dto.DTOList;
 import api.sql.hibernate.dto.FilterDTO;
 import api.sql.hibernate.entities.Colour;
@@ -342,7 +345,7 @@ public class ShopDAO {
 		
 		ProjectionList p1=Projections.projectionList();
 		p1.add(Projections.groupProperty("size.size"));
-        p1.add(Projections.countDistinct("item.id"));
+        p1.add(ProjectionsExtension.countDistinct("item.id"));
 		criteria.setProjection(p1);
         
         
@@ -364,7 +367,7 @@ public class ShopDAO {
 		
 		ProjectionList p2=Projections.projectionList();
 		p2.add(Projections.groupProperty("colour.colour"));
-		p2.add(Projections.countDistinct("item.id"));
+		p2.add(ProjectionsExtension.countDistinct("item.id"));
 		
 		criteria.setProjection(null);
 		criteria.setProjection(p2);
