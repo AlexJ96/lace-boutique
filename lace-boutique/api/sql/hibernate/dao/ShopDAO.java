@@ -314,6 +314,7 @@ public class ShopDAO {
 	public static Map<String,List<FilterDTO>> getFilters(Map<String, List<String>> filters){
 		
 		Map<String, List<FilterDTO>> result = new HashMap();
+		DTOList<FilterDTO> dtoList = new DTOList();
 		
 		Set<String> keys = filters.keySet();
 		for(String k : keys){
@@ -341,7 +342,21 @@ public class ShopDAO {
 			criteria.add(Restrictions.in("colour.colour", colours));
 		}
 		
+		ProjectionList totalItemsCountProjection =Projections.projectionList();
+		totalItemsCountProjection.add(ProjectionsExtension.countDistinct("item.id"));
+		criteria.setProjection(totalItemsCountProjection);
+
+		List<Long> totalCountResult = criteria.list();
+		if(totalCountResult.isEmpty()){
+			return null;
+		}
 		
+		List<FilterDTO> totalFilters = new ArrayList<FilterDTO>();
+		FilterDTO totalCountFilterDTO = new FilterDTO();
+		totalCountFilterDTO.setKey("totalAmount");
+		totalCountFilterDTO.setKeyCount(totalCountResult.get(0));
+		totalFilters.add(totalCountFilterDTO);
+		result.put("TOTAL_COUNT", totalFilters);
 		
 		ProjectionList p1=Projections.projectionList();
 		p1.add(Projections.groupProperty("size.size"));
@@ -354,12 +369,10 @@ public class ShopDAO {
 			return null;
 		}
 		
-		DTOList<FilterDTO> dtoList = new DTOList();
-		
 		List<FilterDTO> sizeFilters = null;
 		try {
 			sizeFilters = dtoList.getDTOList(FilterDTO.class, sizeFilterResult);
-			result.put("COLOUR_FILTERS", sizeFilters);
+			result.put("SIZE_FILTERS", sizeFilters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -376,7 +389,7 @@ public class ShopDAO {
 		List<FilterDTO> colourFilters = null;
 		try {
 			colourFilters = dtoList.getDTOList(FilterDTO.class, colourFilterResult);
-			result.put("SIZE_FILTERS", colourFilters);
+			result.put("COLOUR_FILTERS", colourFilters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

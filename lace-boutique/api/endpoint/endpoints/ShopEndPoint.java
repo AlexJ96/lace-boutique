@@ -11,7 +11,9 @@ import com.google.gson.JsonParser;
 
 import api.endpoint.EndPoint;
 import api.sql.hibernate.dao.ShopDAO;
+import api.sql.hibernate.dto.FilterDTO;
 import api.sql.hibernate.entities.Item;
+import api.sql.hibernate.entities.ItemImage;
 import api.utils.StringUtils;
 import api.utils.Utils;
 import spark.Service;
@@ -42,41 +44,110 @@ public class ShopEndPoint implements EndPoint {
 				return Utils.getJsonBuilder().toJson(shopItems);
 			});
 			
-			spark.post("/items-by-filter", (request, response) -> {
+			spark.post("/getFilters", (request, response) -> {
 				JsonElement jelement = new JsonParser().parse(request.body());
 			    JsonObject  jobject = jelement.getAsJsonObject();
-			    
-			    /**
-			     * Standard Filter should contain:
-			     * Brand
-			     * Colour
-			     * Size
-			     * Category
-			     */
-			    Map<String, String> filter = new HashMap<String, String>();
-			    
-			    String brand = Utils.getJsonFieldAsString(jobject, "Brand");
-			    if (StringUtils.isNotBlank(brand)) {
-			    	filter.put("Brand", brand);
-			    }
-			    
-			    String colour = Utils.getJsonFieldAsString(jobject, "Colour");
-			    if (StringUtils.isNotBlank(colour)) {
-			    	filter.put("Colour", colour);
-			    }
-			    
-			    String size = Utils.getJsonFieldAsString(jobject, "Size");
-			    if (StringUtils.isNotBlank(size)) {
-			    	filter.put("Size", size);
-			    }
-			    
+
+			    Map<String, List<String>> filters = new HashMap();
+				
+				List<String> categoryList = new ArrayList();
 			    String category = Utils.getJsonFieldAsString(jobject, "Category");
+			    
 			    if (StringUtils.isNotBlank(category)) {
-			    	filter.put("Category", category);
+			    	categoryList.add(category);
+			    }
+			    
+			    System.out.println(Utils.getJsonFieldAsString(jobject, "Size"));
+
+				List<String> sizesList = new ArrayList();
+			    String sizes = Utils.getJsonFieldAsString(jobject, "Size");
+			    if (StringUtils.isNotBlank(sizes)) {
+			    	String[] sizeArray = sizes.split(",");
+			    	for (String size : sizeArray) {
+			    		sizesList.add(size);
+			    	}
+			    }
+			    
+			    List<String> coloursList = new ArrayList();
+			    String colours = Utils.getJsonFieldAsString(jobject, "Colour");
+			    if (StringUtils.isNotBlank(colours)) {
+			    	String[] coloursArray = colours.split(",");
+			    	for (String colour : coloursArray) {
+			    		coloursList.add(colour);
+			    	}
+			    }
+			    
+			    if (!categoryList.isEmpty()) {
+			    	filters.put("CATEGORY", categoryList);
+			    }
+			    
+			    if (!sizesList.isEmpty()) {
+					filters.put("SIZE", sizesList);
 			    }
 
-			    List<Item> shopItems = ShopDAO.filterItems(filter);
-				return Utils.getJsonBuilder().toJson(shopItems);
+			    if (!coloursList.isEmpty()) {
+					filters.put("COLOUR", coloursList);
+			    }
+
+			    if (!filters.isEmpty()) {
+					Map<String,List<FilterDTO>> result = ShopDAO.getFilters(filters);
+			    	return Utils.getJsonBuilder().toJson(result);
+			    } else {
+			    	return "";
+			    }
+			});
+			
+			spark.post("/getItems", (request, response) -> {
+				JsonElement jelement = new JsonParser().parse(request.body());
+			    JsonObject  jobject = jelement.getAsJsonObject();
+
+				Map<String, List<String>> filters = new HashMap();
+				
+				List<String> categoryList = new ArrayList();
+			    String category = Utils.getJsonFieldAsString(jobject, "Category");
+			    
+			    if (StringUtils.isNotBlank(category)) {
+			    	categoryList.add(category);
+			    }
+			    
+			    System.out.println(Utils.getJsonFieldAsString(jobject, "Size"));
+
+				List<String> sizesList = new ArrayList();
+			    String sizes = Utils.getJsonFieldAsString(jobject, "Size");
+			    if (StringUtils.isNotBlank(sizes)) {
+			    	String[] sizeArray = sizes.split(",");
+			    	for (String size : sizeArray) {
+			    		sizesList.add(size);
+			    	}
+			    }
+			    
+			    List<String> coloursList = new ArrayList();
+			    String colours = Utils.getJsonFieldAsString(jobject, "Colour");
+			    if (StringUtils.isNotBlank(colours)) {
+			    	String[] coloursArray = colours.split(",");
+			    	for (String colour : coloursArray) {
+			    		coloursList.add(colour);
+			    	}
+			    }
+			    
+			    if (!categoryList.isEmpty()) {
+			    	filters.put("CATEGORY", categoryList);
+			    }
+			    
+			    if (!sizesList.isEmpty()) {
+					filters.put("SIZE", sizesList);
+			    }
+
+			    if (!coloursList.isEmpty()) {
+					filters.put("COLOUR", coloursList);
+			    }
+			    
+			    if (!filters.isEmpty()) {
+			    	List<ItemImage> images = ShopDAO.getItemImage(filters);
+			    	return Utils.getJsonBuilder().toJson(images);
+			    } else {
+			    	return "";
+			    }
 			});
 			
 		});

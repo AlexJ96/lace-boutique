@@ -87,7 +87,7 @@ public class Api {
 //		testShopDTOWithCategoryAndColourAndSize(twoSize, oneColour);
 //		testShopDTOWithCategoryAndColourAndSize(twoSize, twoColour);
 		
-//		testShopDTOGetItemImageWithOnlyCategory();
+		//testShopDTOGetItemImageWithOnlyCategory();
 //		
 //		testShopDTOGetItemImageWithOnlyCategoryAndSize(oneSize);
 //		testShopDTOGetItemImageWithOnlyCategoryAndSize(twoSize);
@@ -99,7 +99,7 @@ public class Api {
 //		testShopDTOGetItemImageWithCategoryAndColourAndSize(twoSize, oneColour);
 		//testShopDTOGetItemImageWithCategoryAndColourAndSize(twoSize, twoColour);
 		
-		testDTO(oneSize, oneColour);
+		//testDTO(oneSize, oneColour);
 		
 	}
 	
@@ -304,6 +304,7 @@ public class Api {
 		
 		List<String> sizeList = new ArrayList<String>();
 		sizeList.add("XS");
+		sizeList.add("S");
 		
 		filters.put("SIZE", sizeList);
 		filters.put("COLOUR", new ArrayList<String>());
@@ -311,13 +312,16 @@ public class Api {
 		Map<String,List<FilterDTO>> result = ShopDAO.getFilters(filters);
 		List<FilterDTO> colourFilters = result.get("COLOUR_FILTERS");
 		List<FilterDTO> sizeFilters = result.get("SIZE_FILTERS");
-		List<FilterDTO> colourTotal = result.get("COLOUR_TOTAL");
-		List<FilterDTO> sizeTotal = result.get("SIZE_TOTAL");
+		List<FilterDTO> totalCount = result.get("TOTAL_COUNT");
 		for(FilterDTO f : colourFilters){
 			System.out.println(f);
 		}
 		
 		for(FilterDTO f : sizeFilters){
+			System.out.println(f);
+		}
+		
+		for (FilterDTO f : totalCount) {
 			System.out.println(f);
 		}
 	}
