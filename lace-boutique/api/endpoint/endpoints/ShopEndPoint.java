@@ -100,6 +100,21 @@ public class ShopEndPoint implements EndPoint {
 			spark.post("/getItems", (request, response) -> {
 				JsonElement jelement = new JsonParser().parse(request.body());
 			    JsonObject  jobject = jelement.getAsJsonObject();
+			    
+			    String pageCount = Utils.getJsonFieldAsString(jobject, "CurrentPage");
+			    String count = Utils.getJsonFieldAsString(jobject, "Count");
+			    int currentPage = 0;
+			    int itemCount = 0;
+			    
+			    if (pageCount != null || StringUtils.isNotBlank(pageCount)) {
+			    	currentPage = Integer.valueOf(pageCount);
+			    }
+			    
+			    if (count != null || StringUtils.isNotBlank(count)) {
+			    	itemCount = Integer.valueOf(count);
+			    }
+			    
+			    System.out.println(currentPage + " " + itemCount);
 
 				Map<String, List<String>> filters = new HashMap();
 				
@@ -143,8 +158,13 @@ public class ShopEndPoint implements EndPoint {
 			    }
 			    
 			    if (!filters.isEmpty()) {
-			    	List<ItemImage> images = ShopDAO.getItemImage(filters);
-			    	return Utils.getJsonBuilder().toJson(images);
+			    	List<ItemImage> images = ShopDAO.getItemImage(filters, currentPage, itemCount);
+			    	if (images != null) {
+			    		System.out.println(images.size());
+			    		System.out.println(images);
+			    	}
+			    	return "";
+			    	//return Utils.getJsonBuilder().toJson(images);
 			    } else {
 			    	return "";
 			    }

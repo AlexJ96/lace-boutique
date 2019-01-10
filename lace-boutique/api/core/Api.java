@@ -233,7 +233,7 @@ public class Api {
 		List<String> category = new ArrayList();
 		category.add("Dresses");
 		filters.put("CATEGORY", category);
-		List<ItemImage> images = ShopDAO.getItemImage(filters);
+		List<ItemImage> images = ShopDAO.getItemImage(filters, 1, 25);
 		for(ItemImage i : images){
 			System.out.println(i);
 		}
@@ -245,7 +245,7 @@ public class Api {
 		List<String> category = new ArrayList();
 		category.add("Dresses");
 		filters.put("CATEGORY", category);
-		List<ItemImage> images = ShopDAO.getItemImage(filters);
+		List<ItemImage> images = ShopDAO.getItemImage(filters, 1, 25);
 		for(ItemImage i : images){
 			System.out.println(i);
 		}
@@ -260,7 +260,7 @@ public class Api {
 		
 		filters.put("SIZE", size);
 		
-		List<ItemImage> images = ShopDAO.getItemImage(filters);
+		List<ItemImage> images = ShopDAO.getItemImage(filters, 1, 25);
 		for(ItemImage i : images){
 			System.out.println(i);
 		}
@@ -275,7 +275,7 @@ public class Api {
 		
 		filters.put("COLOUR", colour);
 		
-		List<ItemImage> images = ShopDAO.getItemImage(filters);
+		List<ItemImage> images = ShopDAO.getItemImage(filters, 1, 25);
 		for(ItemImage i : images){
 			System.out.println(i);
 		}
@@ -290,7 +290,7 @@ public class Api {
 		filters.put("COLOUR", colour);
 		filters.put("SIZE", size);
 		
-		List<ItemImage> images = ShopDAO.getItemImage(filters);
+		List<ItemImage> images = ShopDAO.getItemImage(filters, 1, 25);
 		for(ItemImage i : images){
 			System.out.println(i);
 		}

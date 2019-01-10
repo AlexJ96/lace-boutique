@@ -221,7 +221,7 @@ public class ShopDAO {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<ItemImage> getItemImage(Map<String, List<String>> filters){
+	public static List<ItemImage> getItemImage(Map<String, List<String>> filters, int currentPage, int count){
 		Set<String> keys = filters.keySet();
 		for(String k : keys){
 			if(!StringUtils.equals(k, "SIZE", "CATEGORY", "COLOUR")){
@@ -230,13 +230,6 @@ public class ShopDAO {
 		}
 		
 		Criteria criteria = session.createCriteria(ItemSpec.class);
-		
-		// Query by category.
-		
-		// @ALEXJ
-		// According to your WEBSITE design, category must not be null, due to the navbar selection 
-		// This ought to be checked for null before invoking this method.
-		// Delete this comment after you've read it.
 		List<String> category = filters.get("CATEGORY");
 		
 		criteria.createAlias("item", "item");
@@ -256,15 +249,19 @@ public class ShopDAO {
 		if(colour != null && StringUtils.isNotBlank(colour.toArray(new String[colour.size()]))){
 			criteria.add(Restrictions.in("colour.colour", colour));
 		}
-		ProjectionList p1=Projections.projectionList();
-        p1.add(Projections.property("item.id"));
-        p1.add(Projections.property("colour.id"));	
 		
         criteria.setProjection(Projections.property("item.id"));
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         
+		//Pagination
+		//CurrentPage - 1 (in front end we class page 0 as page 1 so just -1
+		currentPage -= 1;
+		int start = currentPage * count;
+		System.out.println("CurrentPage: " + currentPage + " Count: " + count + " Start: " + start);
+        
 		List<Integer> itemIDs = criteria.list();
 		if(itemIDs.isEmpty()){
+			System.out.println("Items Null");
 			return null;
 		}
 		
@@ -293,6 +290,9 @@ public class ShopDAO {
 		if(isCategoryPage == null || isCategoryPage.isEmpty()){
 			criteria2.add(Restrictions.eq("defaultImage", true));
 		}
+		
+		criteria2.setFirstResult(start);
+		criteria2.setMaxResults(count);
 		
 		
 		List<ItemImage> itemImage = criteria2.list();
