@@ -215,7 +215,7 @@ public class ShopDAO {
 
 	
 	/**
-	 * 
+	 * Getting a list of Item Image(with descriptions) filtered by category, size and colour.
 	 * @param filters
 	 * filters key only accept CATEGORY, SIZE AND COLOUR.
 	 * @return
@@ -264,6 +264,8 @@ public class ShopDAO {
 			System.out.println("Items Null");
 			return null;
 		}
+		// The query above is equivalent to the following SQL:
+		// SELECT item_id FROM item_spec WHERE size IN (SIZES_FROM_FILTERS) AND colour IN (COLOURS_FROM_FILTERS);
 		
 		criteria.setProjection(null);
 		criteria.setProjection(Projections.property("colour.id"));
@@ -271,6 +273,9 @@ public class ShopDAO {
 		if(colourIDs.isEmpty()){
 			return null;
 		}
+		// The query above is equivalent to the following SQL:
+		// SELECT colour_id FROM item_spec WHERE size IN (SIZES_FROM_FILTERS) AND colour IN (COLOURS_FROM_FILTERS); 
+		
 		
 		Criteria criteria2 = session.createCriteria(ItemImage.class);
 		criteria2.createAlias("item", "item");
@@ -278,13 +283,6 @@ public class ShopDAO {
 		
 		criteria2.add(Restrictions.in("colour.id", colourIDs));
 		criteria2.add(Restrictions.in("item.id", itemIDs));
-		
-		// @AlexJ
-		// I dont know how you are planning to display the product details
-		// When you first click on a navbar,  you display all images of the same category.
-		// When you click on any of the images, I suppose you will go into another page giving your users different choices of colours???
-		// If you want to do it,  you can easily add one more key to the Map<String, List<String>> filters.
-		// I wanted to do that for you but I can't come up with a good name for the new key lol
 		
 		List<String> isCategoryPage = filters.get("?NAMEIT?");  // <-- when you provide nothing,  you will have only the default images.
 		if(isCategoryPage == null || isCategoryPage.isEmpty()){
@@ -294,11 +292,19 @@ public class ShopDAO {
 		criteria2.setFirstResult(start);
 		criteria2.setMaxResults(count);
 		
-		
 		List<ItemImage> itemImage = criteria2.list();
 		if(itemImage.isEmpty()){
 			return null;
 		}
+		// The query above is equivalent to the following SQL:
+		// SELECT 
+		// FROM item_image
+		// JOIN item ON item_image.item_id = item.id
+		// JOIN colour ON item_image.colour_id = colour.id
+		// WHERE item_image.item_id IN (ITEM_IDS FROM CRITERIA 1) AND
+		// item_image.colour_id IN (COLOUR_IDS FROM CRITERIA 1)
+		// OFFSET N
+		// LIMIT M;
 		
 		return itemImage;
 	}

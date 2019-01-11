@@ -103,6 +103,8 @@ public class ShopEndPoint implements EndPoint {
 			    
 			    String pageCount = Utils.getJsonFieldAsString(jobject, "CurrentPage");
 			    String count = Utils.getJsonFieldAsString(jobject, "Count");
+			    //System.out.println("Page Count: " + pageCount + " count: " + count);
+			    
 			    int currentPage = 0;
 			    int itemCount = 0;
 			    
@@ -114,7 +116,7 @@ public class ShopEndPoint implements EndPoint {
 			    	itemCount = Integer.valueOf(count);
 			    }
 			    
-			    System.out.println(currentPage + " " + itemCount);
+			    //System.out.println(currentPage + " " + itemCount);
 
 				Map<String, List<String>> filters = new HashMap();
 				
@@ -158,10 +160,17 @@ public class ShopEndPoint implements EndPoint {
 			    }
 			    
 			    if (!filters.isEmpty()) {
-			    	List<ItemImage> images = ShopDAO.getItemImage(filters, currentPage, itemCount);
+			    	// CHANGED HERE!!!!!!
+			    	itemCount = 10;
+			    	List<ItemImage> images = ShopDAO.getItemImage(filters, 1, itemCount);
 			    	if (images != null) {
 			    		System.out.println(images.size());
 			    		System.out.println(images);
+			    	}
+			    	List<ItemImage> images2 = ShopDAO.getItemImage(filters, 2, itemCount);
+			    	if (images2 != null) {
+			    		System.out.println(images2.size());
+			    		System.out.println(images2);
 			    	}
 			    	return "";
 			    	//return Utils.getJsonBuilder().toJson(images);
