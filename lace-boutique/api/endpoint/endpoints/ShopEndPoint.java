@@ -77,6 +77,15 @@ public class ShopEndPoint implements EndPoint {
 			    	}
 			    }
 			    
+			    List<String> brandsList = new ArrayList();
+			    String brands = Utils.getJsonFieldAsString(jobject, "Brand");
+			    if (StringUtils.isNotBlank(brands)) {
+			    	String[] brandsArray = brands.split(",");
+			    	for (String brand : brandsArray) {
+			    		brandsList.add(brand);
+			    	}
+			    }
+			    
 			    if (!categoryList.isEmpty()) {
 			    	filters.put("CATEGORY", categoryList);
 			    }
@@ -87,6 +96,10 @@ public class ShopEndPoint implements EndPoint {
 
 			    if (!coloursList.isEmpty()) {
 					filters.put("COLOUR", coloursList);
+			    }
+			    
+			    if (!brandsList.isEmpty()) {
+			    	filters.put("BRAND", brandsList);
 			    }
 
 			    if (!filters.isEmpty()) {
@@ -101,12 +114,12 @@ public class ShopEndPoint implements EndPoint {
 				JsonElement jelement = new JsonParser().parse(request.body());
 			    JsonObject  jobject = jelement.getAsJsonObject();
 			    
-			    String pageCount = Utils.getJsonFieldAsString(jobject, "CurrentPage");
-			    String count = Utils.getJsonFieldAsString(jobject, "Count");
-			    //System.out.println("Page Count: " + pageCount + " count: " + count);
+			    String pageCount = StringUtils.isBlank(Utils.getJsonFieldAsString(jobject, "CurrentPage")) ? "1" : Utils.getJsonFieldAsString(jobject, "CurrentPage");
+			    String count = StringUtils.isBlank(Utils.getJsonFieldAsString(jobject, "Count")) ? "25" : Utils.getJsonFieldAsString(jobject, "Count");
+			    String order = StringUtils.isBlank(Utils.getJsonFieldAsString(jobject, "Order")) ? "" : Utils.getJsonFieldAsString(jobject, "Order");
 			    
-			    int currentPage = 0;
-			    int itemCount = 0;
+			    int currentPage = 1;
+			    int itemCount = 25;
 			    
 			    if (pageCount != null || StringUtils.isNotBlank(pageCount)) {
 			    	currentPage = Integer.valueOf(pageCount);
@@ -115,8 +128,6 @@ public class ShopEndPoint implements EndPoint {
 			    if (count != null || StringUtils.isNotBlank(count)) {
 			    	itemCount = Integer.valueOf(count);
 			    }
-			    
-			    //System.out.println(currentPage + " " + itemCount);
 
 				Map<String, List<String>> filters = new HashMap();
 				
@@ -147,6 +158,15 @@ public class ShopEndPoint implements EndPoint {
 			    	}
 			    }
 			    
+			    List<String> brandsList = new ArrayList();
+			    String brands = Utils.getJsonFieldAsString(jobject, "Brand");
+			    if (StringUtils.isNotBlank(brands)) {
+			    	String[] brandsArray = brands.split(",");
+			    	for (String brand : brandsArray) {
+			    		brandsList.add(brand);
+			    	}
+			    }
+			    
 			    if (!categoryList.isEmpty()) {
 			    	filters.put("CATEGORY", categoryList);
 			    }
@@ -159,21 +179,17 @@ public class ShopEndPoint implements EndPoint {
 					filters.put("COLOUR", coloursList);
 			    }
 			    
+			    if (!brandsList.isEmpty()) {
+					filters.put("BRAND", brandsList);
+			    }
+			    
 			    if (!filters.isEmpty()) {
-			    	// CHANGED HERE!!!!!!
-			    	itemCount = 10;
-			    	List<ItemImage> images = ShopDAO.getItemImage(filters, 1, itemCount);
+			    	List<ItemImage> images = ShopDAO.getItemImage(filters, currentPage, itemCount, order);
 			    	if (images != null) {
-			    		System.out.println(images.size());
-			    		System.out.println(images);
+				    	return Utils.getJsonBuilder().toJson(images);
+			    	} else {
+			    		return "";
 			    	}
-			    	List<ItemImage> images2 = ShopDAO.getItemImage(filters, 2, itemCount);
-			    	if (images2 != null) {
-			    		System.out.println(images2.size());
-			    		System.out.println(images2);
-			    	}
-			    	return "";
-			    	//return Utils.getJsonBuilder().toJson(images);
 			    } else {
 			    	return "";
 			    }

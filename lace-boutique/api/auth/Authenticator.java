@@ -10,12 +10,15 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import api.core.Api;
+import api.sql.hibernate.dao.AccountDAO;
 import api.sql.hibernate.entities.Account;
+import api.sql.hibernate.entities.containers.WishlistItemContainer;
 import api.utils.StringUtils;
 import api.utils.Utils;
 import net.oauth.jsontoken.JsonToken;
@@ -67,8 +70,20 @@ public class Authenticator {
         
         JsonObject request = new JsonObject();
         request.addProperty("clientId", clientId);
-        request.addProperty("account", account != null ? Utils.getJsonBuilder().toJson(account) : "");
-
+        
+        if (account != null) {
+        	JsonElement accountElement = Utils.getJsonBuilder().toJsonTree(account);
+        	request.add("account", accountElement);
+        
+        	List<WishlistItemContainer> wishlistItems = AccountDAO.getWishlistItems(account);
+        	JsonElement jsonElement = Utils.getJsonBuilder().toJsonTree(wishlistItems);
+        	if (jsonElement != null) 
+        		request.add("wishlist", jsonElement);
+        } else {
+        	request.addProperty("account", "");
+        	request.addProperty("wishlist", "");
+        }
+        
         JsonObject payload = token.getPayloadAsJsonObject();
         payload.add("info", request);
 

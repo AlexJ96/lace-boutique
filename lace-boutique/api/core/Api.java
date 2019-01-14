@@ -1,15 +1,11 @@
 package api.core;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 
-import org.bson.types.ObjectId;
 import org.hibernate.SessionFactory;
 
-import api.auth.Authenticator;
-import api.auth.TokenInfo;
 import api.endpoint.EndPoint;
 import api.endpoint.endpoints.AccountEndPoint;
 import api.endpoint.endpoints.AuthToken;
@@ -17,18 +13,12 @@ import api.endpoint.endpoints.ShopEndPoint;
 import api.endpoint.endpoints.TestEndPoint;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.HibernateSession;
-import api.sql.hibernate.dao.AccountDAO;
-import api.sql.hibernate.dao.ShopDAO;
-import api.sql.hibernate.dto.*;
-import api.sql.hibernate.entities.Account;
+import api.sql.hibernate.entities.Brand;
 import api.sql.hibernate.entities.Colour;
 import api.sql.hibernate.entities.Item;
 import api.sql.hibernate.entities.ItemImage;
 import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.Size;
-import api.sql.hibernate.entities.Wishlist;
-import api.sql.hibernate.entities.WishlistItem;
-import api.utils.SecureUtils;
 
 /**
  * Api Initializer - Sets up all API Endpoints
@@ -55,52 +45,7 @@ public class Api {
 		restContext = new RestContext(8080, basePath);
 		initializeEndPoints();
 		initializeHibernateSession();
-		//testAddUser();
-		//testGetUser();
-		//testDeleteUser();
-		//testGetSearch();
-		//testPasswordValidator();
-		//testAccountToken();
-		
-//		testShopDTOWithOnlyCategory();
-		
-		List<String> oneSize = new ArrayList();
-		oneSize.add("XS"); // @ALEXJ  Change this to XS and you will see the difference
-		List<String> twoSize = new ArrayList();
-		twoSize.add("XS");
-		twoSize.add("S");
-		
-		List<String> oneColour = new ArrayList();
-		oneColour.add("Blue");
-		
-		List<String> twoColour = new ArrayList();
-		twoColour.add("Blue");
-		twoColour.add("Black");
-		
-//		testShopDTOWithOnlyCategoryAndSize(oneSize);
-//		testShopDTOWithOnlyCategoryAndSize(twoSize);
-//		testShopDTOWithOnlyCategoryAndColour(oneColour);
-//		testShopDTOWithOnlyCategoryAndColour(twoColour);
-//		
-//		testShopDTOWithCategoryAndColourAndSize(oneSize, oneColour);
-//		testShopDTOWithCategoryAndColourAndSize(oneSize, twoColour);
-//		testShopDTOWithCategoryAndColourAndSize(twoSize, oneColour);
-//		testShopDTOWithCategoryAndColourAndSize(twoSize, twoColour);
-		
-		//testShopDTOGetItemImageWithOnlyCategory();
-//		
-//		testShopDTOGetItemImageWithOnlyCategoryAndSize(oneSize);
-//		testShopDTOGetItemImageWithOnlyCategoryAndSize(twoSize);
-//		testShopDTOGetItemImageWithOnlyCategoryAndColour(oneColour);
-//		testShopDTOGetItemImageWithOnlyCategoryAndColour(twoColour);
-//		
-//		testShopDTOGetItemImageWithCategoryAndColourAndSize(oneSize, oneColour);
-//		testShopDTOGetItemImageWithCategoryAndColourAndSize(oneSize, twoColour);
-//		testShopDTOGetItemImageWithCategoryAndColourAndSize(twoSize, oneColour);
-		//testShopDTOGetItemImageWithCategoryAndColourAndSize(twoSize, twoColour);
-		
-		//testDTO(oneSize, oneColour);
-		
+		//populateMockDatabase();
 	}
 	
 	private static void initializeEndPoints() {
@@ -124,205 +69,69 @@ public class Api {
 		return hibernateQuery;
 	}
 	
-	private static void testGetSearch() {
-//		Account account = AccountDTO.getAccountByUsername("AlexJ");
-		List<Account> accounts = AccountDAO.getAllAccounts();
-		System.out.println(accounts.size());
-	}
-	
+	private static void populateMockDatabase() {
+		int itemAmount = 50;
+		String[] colours = { "Blue", "Black", "Pink", "Yellow", "Green", "Orange", "Red" };
+		String[] sizes = { "6", "8", "10", "12", "14", "16", "18" };
+		String[] categories = { "Dresses", "Jeans", "Tops" };
+		String[] brands = { "Dress Brand", "Jean Brand", "Top Brand" };
+		double[] prices = { 29.99, 16.99, 34.99 };
+		List<Colour> coloursArray = new ArrayList<Colour>();
+		List<Size> sizesArray = new ArrayList<Size>();
+		List<Brand> brandsArray = new ArrayList<Brand>();
+		
+		for (String colourString : colours) {
+			Colour colour = new Colour();
+			colour.setColour(colourString);
+			coloursArray.add(colour);
+			getHibernateQuery().saveOrUpdateObject(colour);
+		}
+		
+		for (String sizeString : sizes) {
+			Size size = new Size();
+			size.setSize(sizeString);
+			sizesArray.add(size);
+			getHibernateQuery().saveOrUpdateObject(size);
+		}
+		
+		for (String brandString : brands) {
+			Brand brand = new Brand();
+			brand.setBrand(brandString);
+			brandsArray.add(brand);
+			getHibernateQuery().saveOrUpdateObject(brand);
+		}
 
-	
-	
-	public static void testAddUser() {
-		Account account = new Account();
-		account.setUsername("AlexJ");
-		account.setEmail("email@email.com");
-		account.setCanEmail(true);
-		account.setPassword("password");
-		
-		hibernateQuery.saveObject(account);
-		
-		Wishlist wishList = new Wishlist();
-		wishList.setAccount(account);
-		
-		hibernateQuery.saveObject(wishList);
-		
-		Item item = new Item();
-		item.setName("Petite Dress");
-		item.setDescription("A Dress designed for petite ladies");
-		item.setPrice(49.99);
-		item.setBrand("Designer Dresses");
-		item.setCategory("Dresses");
-		
-		hibernateQuery.saveObject(item);
-		
-		ItemSpec itemSpec = new ItemSpec();
-		itemSpec.setItem(item);
-		itemSpec.setQuantity(100);
-		itemSpec.setSize((Size) hibernateQuery.getObject(Size.class, 1));
-		itemSpec.setColour((Colour) hibernateQuery.getObject(Colour.class, 1));
-		
-		hibernateQuery.saveObject(itemSpec);
-		
-		ItemImage itemImage = new ItemImage();
-		itemImage.setColour((Colour) hibernateQuery.getObject(Colour.class, 1));
-		itemImage.setItem(item);
-		itemImage.setDefaultImage(true);
-		itemImage.setUrl("www.google.co.uk");
-		
-		hibernateQuery.saveObject(itemImage);
-		
-		WishlistItem wishItem = new WishlistItem();
-		wishItem.setWishlist(wishList);
-		wishItem.setItem(item);
-		
-		hibernateQuery.saveObject(wishItem);
-	}
-	
-	public static void testGetUser() {
-		Account account = (Account) hibernateQuery.getObject(Account.class, 1);
-		System.out.println(account.toString());
-
-		Wishlist wishlist = (Wishlist) hibernateQuery.getObject(Wishlist.class, account.getId());
-		System.out.println(wishlist.toString());
-
-		WishlistItem wishItem = (WishlistItem) hibernateQuery.getObject(WishlistItem.class, wishlist.getId());
-		System.out.println(wishItem.toString());
-		
-		Item item = wishItem.getItem();
-		System.out.println(item.toString());
-		
-		ItemSpec itemSpec = (ItemSpec) hibernateQuery.getObject(ItemSpec.class, item.getId());
-		System.out.println(itemSpec.toString());
-		
-		ItemImage itemImage = (ItemImage) hibernateQuery.getObject(ItemImage.class, item.getId());
-		System.out.println(itemImage.toString());
-	}
-	
-	public static void testDeleteUser() {
-		/*User user = (User) hibernateQuery.getObject(new User(), 0);
-		if (user != null)
-			hibernateQuery.deleteObject(user);
-		else 
-			System.out.println("User is null");*/
-	}
-	
-	public static void testPasswordValidator(){
-		System.out.println(SecureUtils.validatePassword("Test with your own password lol") ? "Valid" : "Invalid");
-		System.out.println(SecureUtils.validatePassword("123") ? "Valid" : "Invalid");
-		System.out.println(SecureUtils.validatePassword("12345678") ? "Valid" : "Invalid");
-		System.out.println(SecureUtils.validatePassword("12312312123123121231231212312312") ? "Valid" : "Invalid");
-	}
-	
-	public static void testAccountToken() {
-		Account account = (Account) hibernateQuery.getObject(Account.class, 1);
-		String token = Authenticator.generateWebToken(new ObjectId().toString(), 1L);
-		System.out.println(token);
-		TokenInfo tokenInfo = Authenticator.verifyToken(token);
-		if (tokenInfo.getAccount() != null) {
-			System.out.println(tokenInfo.getAccount().toString());
-		}
-	}
-	
-	
-	
-	
-	public static void testShopDTOGetItemImageWithOnlyCategory(){
-		System.out.println("Category Test Only");
-		Map<String, List<String>> filters = new HashMap();
-		List<String> category = new ArrayList();
-		category.add("Dresses");
-		filters.put("CATEGORY", category);
-		List<ItemImage> images = ShopDAO.getItemImage(filters, 1, 25);
-		for(ItemImage i : images){
-			System.out.println(i);
-		}
-	}
-	
-	public static void testShopDTOWGetItemImageithOnlyCategory(){
-		System.out.println("Category Test Only");
-		Map<String, List<String>> filters = new HashMap();
-		List<String> category = new ArrayList();
-		category.add("Dresses");
-		filters.put("CATEGORY", category);
-		List<ItemImage> images = ShopDAO.getItemImage(filters, 1, 25);
-		for(ItemImage i : images){
-			System.out.println(i);
-		}
-	}
-	
-	public static void testShopDTOGetItemImageWithOnlyCategoryAndSize(List<String> size){
-		System.out.println("1 Category with "+ size.size() +" size(s) Test Only");
-		Map<String, List<String>> filters = new HashMap();
-		List<String> category = new ArrayList();
-		category.add("Dresses");
-		filters.put("CATEGORY", category);
-		
-		filters.put("SIZE", size);
-		
-		List<ItemImage> images = ShopDAO.getItemImage(filters, 1, 25);
-		for(ItemImage i : images){
-			System.out.println(i);
-		}
-	}
-	
-	public static void testShopDTOGetItemImageWithOnlyCategoryAndColour(List<String> colour){
-		System.out.println("1 Category with "+ colour.size() +" colour(s) Test Only");
-		Map<String, List<String>> filters = new HashMap();
-		List<String> category = new ArrayList();
-		category.add("Dresses");
-		filters.put("CATEGORY", category);
-		
-		filters.put("COLOUR", colour);
-		
-		List<ItemImage> images = ShopDAO.getItemImage(filters, 1, 25);
-		for(ItemImage i : images){
-			System.out.println(i);
-		}
-	}
-	
-	public static void testShopDTOGetItemImageWithCategoryAndColourAndSize(List<String> size, List<String> colour){
-		System.out.println("1 Category with "+ size.size() +" size(s)" + colour.size() +" colour(s) Test.");
-		Map<String, List<String>> filters = new HashMap();
-		List<String> category = new ArrayList();
-		category.add("Dresses");
-		filters.put("CATEGORY", category);
-		filters.put("COLOUR", colour);
-		filters.put("SIZE", size);
-		
-		List<ItemImage> images = ShopDAO.getItemImage(filters, 1, 25);
-		for(ItemImage i : images){
-			System.out.println(i);
-		}
-	}
-	
-	public static void testDTO(List<String> size, List<String> colour){
-		Map<String, List<String>> filters = new HashMap();
-		List<String> category = new ArrayList();
-		category.add("Dresses");
-		filters.put("CATEGORY", category);
-		
-		List<String> sizeList = new ArrayList<String>();
-		sizeList.add("XS");
-		sizeList.add("S");
-		
-		filters.put("SIZE", sizeList);
-		filters.put("COLOUR", new ArrayList<String>());
-		
-		Map<String,List<FilterDTO>> result = ShopDAO.getFilters(filters);
-		List<FilterDTO> colourFilters = result.get("COLOUR_FILTERS");
-		List<FilterDTO> sizeFilters = result.get("SIZE_FILTERS");
-		List<FilterDTO> totalCount = result.get("TOTAL_COUNT");
-		for(FilterDTO f : colourFilters){
-			System.out.println(f);
-		}
-		
-		for(FilterDTO f : sizeFilters){
-			System.out.println(f);
-		}
-		
-		for (FilterDTO f : totalCount) {
-			System.out.println(f);
+		Random r = new Random();
+		for (int i = 0; i < itemAmount; i++) {
+			int randomNumber = r.nextInt(3);
+			Item item = new Item();
+			item.setCategory(categories[randomNumber]);
+			item.setBrand(brandsArray.get(randomNumber));
+			item.setDescription(item.getBrand() + " " + item.getCategory() + " " + i + " - Lovely!");
+			item.setName(item.getBrand() + " " + item.getCategory() + " " + i);
+			item.setPrice(prices[randomNumber]);
+			
+			getHibernateQuery().saveOrUpdateObject(item);
+			
+			for (int k = 0; k < coloursArray.size(); k++) {
+				ItemImage itemImage = new ItemImage();
+				itemImage.setItem(item);
+				itemImage.setColour(coloursArray.get(k));
+				itemImage.setDefaultImage(k == 0 ? true : false);
+				itemImage.setUrl("www." + item.getName() + "-" + k + ".co.uk");
+				
+				getHibernateQuery().saveOrUpdateObject(itemImage);
+				
+				for (int j = 0; j < sizesArray.size(); j++) {
+					ItemSpec itemSpec = new ItemSpec();
+					itemSpec.setItem(item);
+					itemSpec.setColour(coloursArray.get(k));
+					itemSpec.setSize(sizesArray.get(j));
+					itemSpec.setQuantity(r.nextInt(200));
+					
+					getHibernateQuery().saveOrUpdateObject(itemSpec);
+				}
+			}
 		}
 	}
 

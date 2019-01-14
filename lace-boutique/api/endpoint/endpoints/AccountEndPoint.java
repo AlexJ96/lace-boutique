@@ -12,6 +12,7 @@ import api.endpoint.EndPoint;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.dao.AccountDAO;
 import api.sql.hibernate.entities.Account;
+import api.sql.hibernate.entities.Wishlist;
 import api.utils.Responses;
 import api.utils.SecureUtils;
 import api.utils.StringUtils;
@@ -71,9 +72,16 @@ public class AccountEndPoint implements EndPoint {
 			    account.setEmail(email);
 			    
 			    account.setPassword(hashedPassword);
-			    account.setCanEmail( StringUtils.isNotBlank(canEmail) );
+			    account.setCanEmail(StringUtils.isNotBlank(canEmail));
+			    
+			    Wishlist wishlist = new Wishlist();
+			    wishlist.setAccount(account);
+			    
 			    
 			    if(hibernateQuery.saveObject(account)){
+			    	if (!hibernateQuery.saveObject(wishlist)) {
+				    	return Utils.getJsonBuilder().toJson(Responses.FAILURE_CREATING_ACCOUNT.getResponse());
+				    }
 			    	System.out.println("Success");
 			    	return Utils.getJsonBuilder().toJson("Done");
 			    }else{

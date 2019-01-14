@@ -23,8 +23,8 @@ public class WishlistItem {
 	private Wishlist wishlist;
 
 	@OneToOne
-	@JoinColumn(name = "item_id")
-	private Item item;
+	@JoinColumn(name = "item_spec_id")
+	private ItemSpec itemSpec;
 
 	public int getId() {
 		return id;
@@ -42,17 +42,18 @@ public class WishlistItem {
 		this.wishlist = wishlist;
 	}
 
-	public Item getItem() {
-		return item;
+	public ItemSpec getItemSpec() {
+		return itemSpec;
 	}
 
-	public void setItem(Item item) {
-		this.item = item;
+	public void setItemSpec(ItemSpec itemSpec) {
+		this.itemSpec = itemSpec;
 	}
 
 	@Override
 	public String toString() {
-		return "WishlistItem [id=" + id + ", wishlist=" + wishlist + ", item=" + item + "]";
+		return "WishlistItem [id=" + id + ", wishlist=" + wishlist + ", itemSpec="
+				+ itemSpec + "]";
 	}
 	
 }

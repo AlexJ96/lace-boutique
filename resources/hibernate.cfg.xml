@@ -29,5 +29,6 @@
 		<mapping class="api.sql.hibernate.entities.OrderItem" />
 		<mapping class="api.sql.hibernate.entities.Size" />
 		<mapping class="api.sql.hibernate.entities.Colour" />
+		<mapping class="api.sql.hibernate.entities.Brand" />
 	</session-factory>
 </hibernate-configuration>

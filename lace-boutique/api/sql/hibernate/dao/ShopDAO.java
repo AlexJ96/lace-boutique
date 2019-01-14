@@ -10,6 +10,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CountProjection;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -20,6 +21,7 @@ import api.sql.hibernate.ProjectionsExtension;
 import api.sql.hibernate.SumProjection;
 import api.sql.hibernate.dto.DTOList;
 import api.sql.hibernate.dto.FilterDTO;
+import api.sql.hibernate.entities.Brand;
 import api.sql.hibernate.entities.Colour;
 import api.sql.hibernate.entities.Item;
 import api.sql.hibernate.entities.ItemImage;
@@ -221,12 +223,22 @@ public class ShopDAO {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<ItemImage> getItemImage(Map<String, List<String>> filters, int currentPage, int count){
+	public static List<ItemImage> getItemImage(Map<String, List<String>> filters, int currentPage, int count, String order){
 		Set<String> keys = filters.keySet();
 		for(String k : keys){
-			if(!StringUtils.equals(k, "SIZE", "CATEGORY", "COLOUR")){
+			if(!StringUtils.equals(k, "SIZE", "CATEGORY", "COLOUR", "BRAND")){
 				return null;
 			}
+		}
+		
+		List<String> brand = filters.get("BRAND");
+		List<Integer> brandIds = new ArrayList<Integer>();
+		
+		if (brand != null && !brand.isEmpty()) {
+			Criteria brandCriteria = session.createCriteria(Brand.class);
+			brandCriteria.add(Restrictions.in("brand", brand));
+			brandCriteria.setProjection(Projections.property("id"));
+			brandIds = brandCriteria.list();
 		}
 		
 		Criteria criteria = session.createCriteria(ItemSpec.class);
@@ -235,16 +247,19 @@ public class ShopDAO {
 		criteria.createAlias("item", "item");
 		criteria.createAlias("size", "size");
 		criteria.createAlias("colour", "colour");
+		criteria.createAlias("item.brand", "brand");
 		
 		criteria.add(Restrictions.eq("item.category", category.get(0)));
 		
-		// Query by size
+		if (brandIds != null && !brandIds.isEmpty()) {
+			criteria.add(Restrictions.in("brand.id", brandIds));
+		}
+		
 		List<String> size = filters.get("SIZE");
 		if(size != null && StringUtils.isNotBlank(size.toArray(new String[size.size()]))){
 			criteria.add(Restrictions.in("size.size", size));
 		}
 		
-		// Query by colour
 		List<String> colour = filters.get("COLOUR");
 		if(colour != null && StringUtils.isNotBlank(colour.toArray(new String[colour.size()]))){
 			criteria.add(Restrictions.in("colour.colour", colour));
@@ -253,19 +268,14 @@ public class ShopDAO {
         criteria.setProjection(Projections.property("item.id"));
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         
-		//Pagination
-		//CurrentPage - 1 (in front end we class page 0 as page 1 so just -1
 		currentPage -= 1;
 		int start = currentPage * count;
-		System.out.println("CurrentPage: " + currentPage + " Count: " + count + " Start: " + start);
         
 		List<Integer> itemIDs = criteria.list();
 		if(itemIDs.isEmpty()){
 			System.out.println("Items Null");
 			return null;
 		}
-		// The query above is equivalent to the following SQL:
-		// SELECT item_id FROM item_spec WHERE size IN (SIZES_FROM_FILTERS) AND colour IN (COLOURS_FROM_FILTERS);
 		
 		criteria.setProjection(null);
 		criteria.setProjection(Projections.property("colour.id"));
@@ -273,9 +283,6 @@ public class ShopDAO {
 		if(colourIDs.isEmpty()){
 			return null;
 		}
-		// The query above is equivalent to the following SQL:
-		// SELECT colour_id FROM item_spec WHERE size IN (SIZES_FROM_FILTERS) AND colour IN (COLOURS_FROM_FILTERS); 
-		
 		
 		Criteria criteria2 = session.createCriteria(ItemImage.class);
 		criteria2.createAlias("item", "item");
@@ -292,19 +299,20 @@ public class ShopDAO {
 		criteria2.setFirstResult(start);
 		criteria2.setMaxResults(count);
 		
+		if (order.equalsIgnoreCase("highest")) {
+			criteria2.addOrder(Order.desc("item.price"));
+		} else if (order.equalsIgnoreCase("lowest")) {
+			criteria2.addOrder(Order.asc("item.price"));
+		} else if (order.equalsIgnoreCase("newest")) {
+			criteria2.addOrder(Order.desc("item.created"));
+		} else if (order.equalsIgnoreCase("oldest")) {
+			criteria2.addOrder(Order.asc("item.created"));
+		}
+		
 		List<ItemImage> itemImage = criteria2.list();
 		if(itemImage.isEmpty()){
 			return null;
 		}
-		// The query above is equivalent to the following SQL:
-		// SELECT 
-		// FROM item_image
-		// JOIN item ON item_image.item_id = item.id
-		// JOIN colour ON item_image.colour_id = colour.id
-		// WHERE item_image.item_id IN (ITEM_IDS FROM CRITERIA 1) AND
-		// item_image.colour_id IN (COLOUR_IDS FROM CRITERIA 1)
-		// OFFSET N
-		// LIMIT M;
 		
 		return itemImage;
 	}
@@ -324,9 +332,19 @@ public class ShopDAO {
 		
 		Set<String> keys = filters.keySet();
 		for(String k : keys){
-			if(!StringUtils.equals(k, "CATEGORY", "SIZE", "COLOUR")){
+			if(!StringUtils.equals(k, "CATEGORY", "SIZE", "COLOUR", "BRAND")){
 				return null;
 			}
+		}
+
+		List<String> brand = filters.get("BRAND");
+		List<Integer> brandIds = new ArrayList<Integer>();
+		
+		if (brand != null && !brand.isEmpty()) {
+			Criteria brandCriteria = session.createCriteria(Brand.class);
+			brandCriteria.add(Restrictions.in("brand", brand));
+			brandCriteria.setProjection(Projections.property("id"));
+			brandIds = brandCriteria.list();
 		}
 		
 		Criteria criteria = session.createCriteria(ItemSpec.class);
@@ -335,6 +353,7 @@ public class ShopDAO {
 		criteria.createAlias("item", "item");
 		criteria.createAlias("size", "size");
 		criteria.createAlias("colour", "colour");
+		criteria.createAlias("item.brand", "brand");
 		
 		criteria.add(Restrictions.eq("item.category", category.get(0)));
 		
@@ -346,6 +365,10 @@ public class ShopDAO {
 		List<String> colours = filters.get("COLOUR");
 		if(colours != null && !colours.isEmpty()){
 			criteria.add(Restrictions.in("colour.colour", colours));
+		}
+		
+		if (brandIds != null && !brandIds.isEmpty()) {
+			criteria.add(Restrictions.in("brand.id", brandIds));
 		}
 		
 		ProjectionList totalItemsCountProjection =Projections.projectionList();
@@ -400,6 +423,24 @@ public class ShopDAO {
 			e.printStackTrace();
 			return null;
 		}
+		
+		ProjectionList p3=Projections.projectionList();
+		p3.add(Projections.groupProperty("brand.brand"));
+		p3.add(ProjectionsExtension.countDistinct("item.id"));
+		
+		criteria.setProjection(null);
+		criteria.setProjection(p3);
+		
+		List<Object[]> brandFilterResult = criteria.list();
+		List<FilterDTO> brandFilters = null;
+		try {
+			brandFilters = dtoList.getDTOList(FilterDTO.class, brandFilterResult);
+			result.put("BRAND_FILTERS", brandFilters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
 		return result;
 	}
 	
