@@ -12,6 +12,7 @@ import api.endpoint.EndPoint;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.dao.AccountDAO;
 import api.sql.hibernate.entities.Account;
+import api.sql.hibernate.entities.Cart;
 import api.sql.hibernate.entities.Wishlist;
 import api.utils.Responses;
 import api.utils.SecureUtils;
@@ -77,11 +78,17 @@ public class AccountEndPoint implements EndPoint {
 			    Wishlist wishlist = new Wishlist();
 			    wishlist.setAccount(account);
 			    
+			    Cart cart = new Cart();
+			    cart.setAccount(account);
+			    
 			    
 			    if(hibernateQuery.saveObject(account)){
 			    	if (!hibernateQuery.saveObject(wishlist)) {
 				    	return Utils.getJsonBuilder().toJson(Responses.FAILURE_CREATING_ACCOUNT.getResponse());
 				    }
+			    	if (!hibernateQuery.saveObject(cart)) {
+				    	return Utils.getJsonBuilder().toJson(Responses.FAILURE_CREATING_ACCOUNT.getResponse());
+			    	}
 			    	System.out.println("Success");
 			    	return Utils.getJsonBuilder().toJson("Done");
 			    }else{

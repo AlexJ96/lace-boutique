@@ -3,12 +3,12 @@ package api.sql.hibernate.entities.containers;
 import api.sql.hibernate.entities.ItemImage;
 import api.sql.hibernate.entities.Size;
 
-public class WishlistItemContainer {
+public class ItemContainer {
 
 	private Size size;
 	private ItemImage itemImage;
 	
-	public WishlistItemContainer(Size size, ItemImage itemImage) {
+	public ItemContainer(Size size, ItemImage itemImage) {
 		this.size = size;
 		this.itemImage = itemImage;
 	}

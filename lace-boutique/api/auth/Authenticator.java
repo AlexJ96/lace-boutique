@@ -18,7 +18,7 @@ import com.google.gson.JsonParser;
 import api.core.Api;
 import api.sql.hibernate.dao.AccountDAO;
 import api.sql.hibernate.entities.Account;
-import api.sql.hibernate.entities.containers.WishlistItemContainer;
+import api.sql.hibernate.entities.containers.ItemContainer;
 import api.utils.StringUtils;
 import api.utils.Utils;
 import net.oauth.jsontoken.JsonToken;
@@ -75,13 +75,23 @@ public class Authenticator {
         	JsonElement accountElement = Utils.getJsonBuilder().toJsonTree(account);
         	request.add("account", accountElement);
         
-        	List<WishlistItemContainer> wishlistItems = AccountDAO.getWishlistItems(account);
-        	JsonElement jsonElement = Utils.getJsonBuilder().toJsonTree(wishlistItems);
-        	if (jsonElement != null) 
-        		request.add("wishlist", jsonElement);
+        	List<ItemContainer> wishlistItems = AccountDAO.getWishlistItems(account);
+        	JsonElement wishListElement = Utils.getJsonBuilder().toJsonTree(wishlistItems);
+        	if (wishListElement != null) 
+        		request.add("wishlist", wishListElement);
+        	else
+            	request.addProperty("wishlist", "");
+        	
+        	List<ItemContainer> cartItems = AccountDAO.getCartItems(account);
+        	JsonElement cartElement = Utils.getJsonBuilder().toJsonTree(cartItems);
+        	if (cartElement != null)
+        		request.add("cart", cartElement);
+        	else
+            	request.addProperty("cart", "");
         } else {
         	request.addProperty("account", "");
         	request.addProperty("wishlist", "");
+        	request.addProperty("cart", "");
         }
         
         JsonObject payload = token.getPayloadAsJsonObject();

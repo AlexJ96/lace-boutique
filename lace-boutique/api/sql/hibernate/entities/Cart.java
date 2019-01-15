@@ -10,8 +10,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "orders")
-public class Order {
+@Table(name = "cart")
+public class Cart {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -21,17 +21,6 @@ public class Order {
 	@OneToOne
 	@JoinColumn(name = "account_id")
 	private Account account;
-	
-	@Column(name = "order_total")
-	private double orderTotal;
-	
-	@OneToOne
-	@JoinColumn(name = "discount_id")
-	private Discount discount;
-	
-	@OneToOne
-	@JoinColumn(name = "work_status_id")
-	private WorkStatus workStatus;
 
 	public int getId() {
 		return id;
@@ -49,17 +38,9 @@ public class Order {
 		this.account = account;
 	}
 
-	public double getOrderTotal() {
-		return orderTotal;
-	}
-
-	public void setOrderTotal(double orderTotal) {
-		this.orderTotal = orderTotal;
-	}
-
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", account=" + account + ", orderTotal=" + orderTotal + "]";
+		return "Cart [id=" + id + ", account=" + account + "]";
 	}
 	
 }

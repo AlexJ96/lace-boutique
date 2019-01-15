@@ -17,6 +17,8 @@ public class RestContext {
     private final String basePath;
     
     private final String url = "http://localhost:8080";
+    
+    private final String[] unauthorizedEndPoints = { "/token/request-token", "/token/refresh-token", "/shop/getFilters", "/shop/getItems" };
 
     public RestContext(int port, String basePath) {
         this.basePath = basePath;
@@ -46,7 +48,14 @@ public class RestContext {
             response.header("Access-Control-Allow-Origin", "*");
             response.header("Access-Control-Allow-Headers", "Content-Type, LBT");
             
-            if (!request.url().equalsIgnoreCase(url + basePath + "/token/request-token") && !request.url().equalsIgnoreCase(url + basePath + "/token/refresh-token")) {
+            boolean needsAuth = true;
+            
+            for (String unauthorizedEndPoint : unauthorizedEndPoints) {
+            	if (request.url().equalsIgnoreCase(url + basePath + unauthorizedEndPoint))
+            		needsAuth = false;
+            }
+            
+            if (needsAuth == true) {
 	            String token = request.headers("LBT");
 				int responseId = Authenticator.validateAuthToken(token);
 				
