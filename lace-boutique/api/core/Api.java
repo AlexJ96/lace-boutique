@@ -11,6 +11,7 @@ import api.endpoint.endpoints.AccountEndPoint;
 import api.endpoint.endpoints.AuthToken;
 import api.endpoint.endpoints.ShopEndPoint;
 import api.endpoint.endpoints.TestEndPoint;
+import api.mail.EmailService;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.HibernateSession;
 import api.sql.hibernate.entities.Brand;
@@ -19,6 +20,8 @@ import api.sql.hibernate.entities.Item;
 import api.sql.hibernate.entities.ItemImage;
 import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.Size;
+import api.sql.hibernate.entities.Wishlist;
+import api.sql.hibernate.entities.WishlistItem;
 
 /**
  * Api Initializer - Sets up all API Endpoints
@@ -46,6 +49,9 @@ public class Api {
 		initializeEndPoints();
 		initializeHibernateSession();
 		//populateMockDatabase();
+		new EmailService().testEmail();
+
+		joinTest();
 	}
 	
 	private static void initializeEndPoints() {
@@ -133,6 +139,18 @@ public class Api {
 				}
 			}
 		}
+	}
+			
+	static void joinTest(){
+		
+		initializeHibernateSession();
+		
+		WishlistItem w = (WishlistItem)hibernateQuery.getObject(WishlistItem.class, 1);
+		System.out.println(w.toString());
+		
+		
+		Wishlist wl = (Wishlist) hibernateQuery.getObject(Wishlist.class, 1);
+		System.out.println(wl.getWishlistItem().get(1));
 	}
 
 }

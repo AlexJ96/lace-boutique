@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -18,7 +19,7 @@ public class CartItem {
 	@Column(name = "id")
 	private int id;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "cart_id")
 	private Cart cart;
 
