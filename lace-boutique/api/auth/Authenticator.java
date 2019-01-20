@@ -18,6 +18,7 @@ import com.google.gson.JsonParser;
 import api.core.Api;
 import api.sql.hibernate.dao.AccountDAO;
 import api.sql.hibernate.entities.Account;
+import api.sql.hibernate.entities.Cart;
 import api.sql.hibernate.entities.Wishlist;
 import api.sql.hibernate.entities.containers.ItemContainer;
 import api.utils.StringUtils;
@@ -84,8 +85,8 @@ public class Authenticator {
         	else
             	request.addProperty("wishlist", "");
         	
-        	List<ItemContainer> cartItems = AccountDAO.getCartItems(account);
-        	JsonElement cartElement = Utils.getJsonBuilder().toJsonTree(cartItems);
+        	Cart cart = AccountDAO.getCart(account);
+        	JsonElement cartElement = Utils.getJsonBuilder().toJsonTree(cart);
         	if (cartElement != null)
         		request.add("cart", cartElement);
         	else
