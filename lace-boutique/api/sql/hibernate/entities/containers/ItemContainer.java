@@ -1,24 +1,26 @@
 package api.sql.hibernate.entities.containers;
 
 import api.sql.hibernate.entities.ItemImage;
+import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.Size;
 
+@Deprecated
 public class ItemContainer {
 
-	private Size size;
+	private ItemSpec itemSpec;
 	private ItemImage itemImage;
 	
-	public ItemContainer(Size size, ItemImage itemImage) {
-		this.size = size;
+	public ItemContainer(ItemSpec itemSpec, ItemImage itemImage) {
+		this.itemSpec = itemSpec;
 		this.itemImage = itemImage;
 	}
 
-	public Size getSize() {
-		return size;
+	public ItemSpec getItemSpec() {
+		return itemSpec;
 	}
 
-	public void setSize(Size size) {
-		this.size = size;
+	public void setItemSpec(ItemSpec itemSpec) {
+		this.itemSpec = itemSpec;
 	}
 
 	public ItemImage getItemImage() {
@@ -31,7 +33,7 @@ public class ItemContainer {
 
 	@Override
 	public String toString() {
-		return "WishlistItemContainer [size=" + size + ", itemImage=" + itemImage + "]";
+		return "WishlistItemContainer [itemSpec=" + itemSpec + ", itemImage=" + itemImage + "]";
 	}
 	
 }
