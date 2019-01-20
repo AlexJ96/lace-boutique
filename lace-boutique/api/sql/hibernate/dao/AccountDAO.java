@@ -57,58 +57,17 @@ public class AccountDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<ItemContainer> getWishlistItems(Account account) {
+	public static List<Wishlist> getWishlistItems(Account account) {
 		Criteria wishlistCriteria = session.createCriteria(Wishlist.class);
 
 		wishlistCriteria.createAlias("account", "account");
 		wishlistCriteria.add(Restrictions.eq("account.id", account.getId()));
-		wishlistCriteria.setProjection(Projections.property("id"));
         
-        List<Integer> wishlistIdList = wishlistCriteria.list();
-        if (wishlistIdList.isEmpty()) {
+        List<Wishlist> wishLists = wishlistCriteria.list();
+        if (wishLists.isEmpty()) {
         	return null;
         }
-        
-        int wishlistId = wishlistIdList.get(0);
-        
-        Criteria wishlistItemCriteria = session.createCriteria(WishlistItem.class);
-        wishlistItemCriteria.createAlias("wishlist", "wishlist");
-        wishlistItemCriteria.createAlias("itemSpec", "itemSpec");
-        wishlistItemCriteria.add(Restrictions.eq("wishlist.id", wishlistId));
-        wishlistItemCriteria.setProjection(Projections.property("itemSpec"));
-        
-        List<ItemSpec> itemSpecs = wishlistItemCriteria.list();
-        if (itemSpecs.isEmpty())
-        	return null;
-        
-        List<Integer> colourIDs = new ArrayList<Integer>();
-        List<Integer> itemIDs = new ArrayList<Integer>();
-        for (ItemSpec itemSpec : itemSpecs) {
-        	itemIDs.add(itemSpec.getItem().getId());
-        	colourIDs.add(itemSpec.getColour().getId());
-        }
-        
-        Criteria itemImageCriteria = session.createCriteria(ItemImage.class);
-        itemImageCriteria.createAlias("item", "item");
-        itemImageCriteria.createAlias("colour", "colour");
-        
-        Criterion[] criterion = new Criterion[itemIDs.size()];
-        
-        for (int i = 0; i < itemIDs.size(); i++) {
-        	Criterion criteria = Restrictions.and(Restrictions.eq("item.id", (int)itemIDs.get(i)), Restrictions.eq("colour.id", (int)colourIDs.get(i)));
-        	criterion[i] = criteria;
-        }
-        
-        itemImageCriteria.add(Restrictions.or(criterion));
-		
-		List<ItemImage> itemImages = itemImageCriteria.list();
-		List<ItemContainer> itemContainerList = new ArrayList<ItemContainer>();
-		for (ItemImage itemImage : itemImages) {
-			ItemSpec itemSpec = itemSpecs.stream().filter((spec) -> (spec.getColour().getId() == itemImage.getColour().getId() && spec.getItem().getId() == itemImage.getItem().getId())).findFirst().orElse(new ItemSpec());
-			ItemContainer itemContainer = new ItemContainer(itemSpec.getSize(), itemImage);
-			itemContainerList.add(itemContainer);
-		}
-		return itemContainerList.isEmpty() ? null : itemContainerList;
+        return wishLists;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -160,8 +119,8 @@ public class AccountDAO {
 		List<ItemContainer> itemContainerList = new ArrayList<ItemContainer>();
 		for (ItemImage itemImage : itemImages) {
 			ItemSpec itemSpec = itemSpecs.stream().filter((spec) -> (spec.getColour().getId() == itemImage.getColour().getId() && spec.getItem().getId() == itemImage.getItem().getId())).findFirst().orElse(new ItemSpec());
-			ItemContainer itemContainer = new ItemContainer(itemSpec.getSize(), itemImage);
-			itemContainerList.add(itemContainer);
+			//ItemContainer itemContainer = new ItemContainer(itemSpec.getSize(), itemImage);
+			//itemContainerList.add(itemContainer);
 		}
 		return itemContainerList.isEmpty() ? null : itemContainerList;
 	}
