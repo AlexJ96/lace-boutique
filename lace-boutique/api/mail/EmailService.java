@@ -22,7 +22,7 @@ import org.apache.velocity.app.VelocityEngine;
 public class EmailService {
 	
 	private String username = "alex_football_2k8@hotmail.co.uk";
-	private String password = "O1s2c3a4r5!";
+	private String password = "";
 	
 	public Session getEmailSession() {
 	   Properties prop = new Properties();
