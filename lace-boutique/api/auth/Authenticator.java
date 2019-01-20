@@ -18,6 +18,7 @@ import com.google.gson.JsonParser;
 import api.core.Api;
 import api.sql.hibernate.dao.AccountDAO;
 import api.sql.hibernate.entities.Account;
+import api.sql.hibernate.entities.Wishlist;
 import api.sql.hibernate.entities.containers.ItemContainer;
 import api.utils.StringUtils;
 import api.utils.Utils;
@@ -75,8 +76,9 @@ public class Authenticator {
         	JsonElement accountElement = Utils.getJsonBuilder().toJsonTree(account);
         	request.add("account", accountElement);
         
-        	List<ItemContainer> wishlistItems = AccountDAO.getWishlistItems(account);
-        	JsonElement wishListElement = Utils.getJsonBuilder().toJsonTree(wishlistItems);
+        	List<Wishlist> wishlists = AccountDAO.getWishlists(account);
+        	
+        	JsonElement wishListElement = Utils.getJsonBuilder().toJsonTree(wishlists);
         	if (wishListElement != null) 
         		request.add("wishlist", wishListElement);
         	else
