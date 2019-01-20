@@ -1,18 +1,18 @@
 package api.sql.hibernate.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import java.io.Serializable;
+import java.util.List;
+
 import javax.persistence.*;
-import javax.persistence.Table;
+
+import org.hibernate.annotations.Where;
 
 @Entity
 @Table(name = "item_spec")
-public class ItemSpec {
+public class ItemSpec implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name = "id")
@@ -34,6 +34,24 @@ public class ItemSpec {
 	@ManyToOne
 	@JoinColumn(name = "colour_id")
 	private Colour colour;
+	
+	
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinColumns({
+        @JoinColumn(name = "item_id", referencedColumnName = "id"),
+        @JoinColumn(name = "colour_id", referencedColumnName = "colour_id")
+	})
+	private List<ItemImage> itemImages;
+	
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinColumns({
+        @JoinColumn(name = "item_id", referencedColumnName = "id"),
+        @JoinColumn(name = "colour_id", referencedColumnName = "colour_id")
+	})
+	@Where(clause="default_image = '1'")
+	private List<ItemImage> defaultImage;
+	
+	
 	
 	public int getId() {
 		return id;
@@ -74,11 +92,19 @@ public class ItemSpec {
 	public void setColour(Colour colour){
 		this.colour = colour;
 	}
+	
+	public List<ItemImage> getItemImages(){
+		return this.itemImages;
+	}
 
+	public List<ItemImage> getDefaultItemImages(){
+		return this.defaultImage;
+	}
+	
 	@Override
 	public String toString() {
 		return "ItemSpec [id=" + id + ", item=" + item + ", size=" + size + ", quantity=" + quantity + ", colour="
-				+ colour + "]";
+				+ colour + ", itemImages=" + itemImages + ", defaultImage=" + defaultImage + "]";
 	}
 	
 }
