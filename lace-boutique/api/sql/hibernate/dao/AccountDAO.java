@@ -57,7 +57,7 @@ public class AccountDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<Wishlist> getWishlistItems(Account account) {
+	public static List<Wishlist> getWishlists(Account account) {
 		Criteria wishlistCriteria = session.createCriteria(Wishlist.class);
 
 		wishlistCriteria.createAlias("account", "account");
