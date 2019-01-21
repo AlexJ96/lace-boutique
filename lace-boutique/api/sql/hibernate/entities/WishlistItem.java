@@ -19,6 +19,10 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
+import com.google.gson.annotations.Expose;
+
+import api.annotation.GsonIgnore;
+
 @Entity
 @Table(name = "wishlist_item")
 public class WishlistItem {
@@ -28,10 +32,12 @@ public class WishlistItem {
 	@Column(name = "id")
 	private int id;
 	
+	@GsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "wishlist_id")
 	private Wishlist wishlist;
-
+	
+	
 	@OneToOne
 	@JoinColumn(name = "item_spec_id")
 	private ItemSpec itemSpec;

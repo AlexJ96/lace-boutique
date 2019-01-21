@@ -6,6 +6,9 @@ import java.util.Random;
 
 import org.hibernate.SessionFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import api.endpoint.EndPoint;
 import api.endpoint.endpoints.AccountEndPoint;
 import api.endpoint.endpoints.AuthToken;
@@ -22,6 +25,7 @@ import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.Size;
 import api.sql.hibernate.entities.Wishlist;
 import api.sql.hibernate.entities.WishlistItem;
+import api.utils.Utils;
 
 /**
  * Api Initializer - Sets up all API Endpoints
@@ -142,11 +146,15 @@ public class Api {
 	}
 			
 	static void joinTest(){
-		WishlistItem w = (WishlistItem)hibernateQuery.getObject(WishlistItem.class, 1);
-		System.out.println(w.toString());
+//		WishlistItem w = (WishlistItem)hibernateQuery.getObject(WishlistItem.class, 1);
+//		System.out.println(w.toString());
 		
 		Wishlist wl = (Wishlist) hibernateQuery.getObject(Wishlist.class, 1);
-		System.out.println(wl.getWishlistItem().get(1));
+//		System.out.println(wl.getWishlistItem().get(1));
+		
+
+
+		System.out.println(Utils.getJsonBuilder().toJson(wl));
 	}
 
 }

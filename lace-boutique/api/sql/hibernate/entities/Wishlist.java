@@ -14,10 +14,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.google.gson.annotations.Expose;
+
+import api.annotation.GsonIgnore;
+
 @Entity
 @Table(name = "wishlist")
 public class Wishlist {
 	
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name = "id")
@@ -26,7 +31,7 @@ public class Wishlist {
 	@OneToOne
 	@JoinColumn(name = "account_id")
 	private Account account;
-
+	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy="wishlist")
 	private List<WishlistItem> wishlistItems;
 	

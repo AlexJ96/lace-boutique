@@ -1,14 +1,28 @@
 package api.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+
+import api.annotation.GsonIgnore;
 
 public class Utils {
 	
-	private static Gson jsonBuilder = new GsonBuilder().create();
+//	private static Gson jsonBuilder = new GsonBuilder().create();
+	private static Gson jsonBuilder = new GsonBuilder()
+			.addSerializationExclusionStrategy(
+			new ExclusionStrategy(){
+        @Override
+        public boolean shouldSkipField(FieldAttributes f)
+        {
+            return f.getAnnotation(GsonIgnore.class) != null;
+        }
+
+        @Override
+        public boolean shouldSkipClass(Class<?> clazz)
+        {
+            return false;
+        }
+    })
+    .create();
 	
 	public Utils() {
 	}
@@ -41,5 +55,6 @@ public class Utils {
 		}
 		return jobject.get(fieldName).getAsJsonArray();
 	}
+	
 	
 }

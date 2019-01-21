@@ -10,6 +10,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.google.gson.annotations.Expose;
+
+import api.annotation.GsonIgnore;
+
 @Entity
 @Table(name = "cart_item")
 public class CartItem {
@@ -19,6 +23,7 @@ public class CartItem {
 	@Column(name = "id")
 	private int id;
 	
+	@GsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "cart_id")
 	private Cart cart;
