@@ -77,20 +77,27 @@ public class Authenticator {
         	JsonElement accountElement = Utils.getJsonBuilder().toJsonTree(account);
         	request.add("account", accountElement);
         
-        	List<Wishlist> wishlists = AccountDAO.getWishlists(account);
+        	Wishlist wishlist = AccountDAO.getWishlists(account);
+        	System.out.println(wishlist.toString());
         	
-        	JsonElement wishListElement = Utils.getJsonBuilder().toJsonTree(wishlists);
-        	if (wishListElement != null) 
-        		request.add("wishlist", wishListElement);
-        	else
-            	request.addProperty("wishlist", "");
+        	System.out.println(Utils.getJsonBuilder().toJson(wishlist));
+        	
+        	/*JsonElement wishListElement = Utils.getJsonBuilder().toJsonTree(wishlists);
+			if (wishListElement != null) 
+				request.add("wishlist", wishListElement);
+			else
+				request.addProperty("wishlist", "");*/
         	
         	Cart cart = AccountDAO.getCart(account);
-        	JsonElement cartElement = Utils.getJsonBuilder().toJsonTree(cart);
-        	if (cartElement != null)
-        		request.add("cart", cartElement);
-        	else
-            	request.addProperty("cart", "");
+        	System.out.println(cart.toString());
+        	System.out.println(Utils.getJsonBuilder().toJson(cart));
+        	
+        	/*JsonElement cartElement = Utils.getJsonBuilder().toJsonTree(cart);
+			if (cartElement != null)
+				request.add("cart", cartElement);
+			else
+				request.addProperty("cart", "");*/
+        	
         } else {
         	request.addProperty("account", "");
         	request.addProperty("wishlist", "");

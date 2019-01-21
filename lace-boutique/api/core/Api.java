@@ -49,7 +49,7 @@ public class Api {
 		initializeEndPoints();
 		initializeHibernateSession();
 		//populateMockDatabase();
-		new EmailService().testEmail();
+		//new EmailService().testEmail();
 
 		joinTest();
 	}
@@ -142,12 +142,8 @@ public class Api {
 	}
 			
 	static void joinTest(){
-		
-		initializeHibernateSession();
-		
 		WishlistItem w = (WishlistItem)hibernateQuery.getObject(WishlistItem.class, 1);
 		System.out.println(w.toString());
-		
 		
 		Wishlist wl = (Wishlist) hibernateQuery.getObject(Wishlist.class, 1);
 		System.out.println(wl.getWishlistItem().get(1));

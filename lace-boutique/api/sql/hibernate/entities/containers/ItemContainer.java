@@ -2,7 +2,6 @@ package api.sql.hibernate.entities.containers;
 
 import api.sql.hibernate.entities.ItemImage;
 import api.sql.hibernate.entities.ItemSpec;
-import api.sql.hibernate.entities.Size;
 
 @Deprecated
 public class ItemContainer {

@@ -26,7 +26,7 @@ public class Cart {
 	@JoinColumn(name = "account_id")
 	private Account account;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="cartItem")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="cart")
 	private List<CartItem> cartItems;
 	
 	public int getId() {

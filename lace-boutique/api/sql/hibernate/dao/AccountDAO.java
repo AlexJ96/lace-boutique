@@ -1,24 +1,16 @@
 package api.sql.hibernate.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import api.core.Api;
 import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Cart;
-import api.sql.hibernate.entities.CartItem;
-import api.sql.hibernate.entities.ItemImage;
-import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.Wishlist;
-import api.sql.hibernate.entities.WishlistItem;
-import api.sql.hibernate.entities.containers.ItemContainer;
 
 public class AccountDAO {
 	
@@ -58,17 +50,18 @@ public class AccountDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<Wishlist> getWishlists(Account account) {
+	public static Wishlist getWishlists(Account account) {
 		Criteria wishlistCriteria = session.createCriteria(Wishlist.class);
 
 		wishlistCriteria.createAlias("account", "account");
 		wishlistCriteria.add(Restrictions.eq("account.id", account.getId()));
+		wishlistCriteria.addOrder(Order.desc("id"));
         
         List<Wishlist> wishLists = wishlistCriteria.list();
         if (wishLists.isEmpty()) {
         	return null;
         }
-        return wishLists;
+        return wishLists.get(0);
 	}
 	
 	@SuppressWarnings("unchecked")
