@@ -8,12 +8,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import api.auth.Authenticator;
+import api.core.Api;
 import api.endpoint.EndPoint;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.dao.AccountDAO;
 import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Cart;
 import api.sql.hibernate.entities.Wishlist;
+import api.sql.hibernate.entities.WishlistItem;
 import api.utils.Responses;
 import api.utils.SecureUtils;
 import api.utils.StringUtils;
@@ -124,6 +126,68 @@ public class AccountEndPoint implements EndPoint {
 			    	System.out.println("Login Failed");
 			    	return Utils.getJsonBuilder().toJson(Responses.INVAID_EMAIL_OR_PASSWORD.getResponse());
 			    }
+			});
+			
+			spark.post("/removeCartItem", (request, response) -> {
+				String data = request.body();
+				
+				JsonElement jelement = new JsonParser().parse(data);
+			    JsonObject  jobject = jelement.getAsJsonObject();
+
+			    String accountId = Utils.getJsonFieldAsString(jobject, "accountId");
+			    String cartId = Utils.getJsonFieldAsString(jobject, "cartId");
+
+				Account account = (Account) Api.getHibernateQuery().getObject(Account.class, Integer.valueOf(accountId));
+			    
+			    System.out.println("Account Id: " + accountId + " Cart Id: " + cartId);
+			    AccountDAO.removeFromCart(account, Integer.valueOf(cartId));
+			    
+			    String newToken = "Token: " + Authenticator.generateWebToken(new ObjectId().toString(), 1L, account);
+		    	return Utils.getJsonBuilder().toJson(newToken);
+			});
+			
+			spark.post("/addWishlistItem", (request, response) -> {
+				String data = request.body();
+				
+				JsonElement jelement = new JsonParser().parse(data);
+			    JsonObject  jobject = jelement.getAsJsonObject();
+
+			    String accountId = Utils.getJsonFieldAsString(jobject, "accountId");
+			    String itemId = Utils.getJsonFieldAsString(jobject, "itemId");
+
+				Account account = (Account) Api.getHibernateQuery().getObject(Account.class, Integer.valueOf(accountId));
+				
+				AccountDAO.addToWishlist(account, Integer.valueOf(itemId));
+				Wishlist wishlist = AccountDAO.getWishlists(account);
+				
+				for (int i = 0; i < wishlist.getWishlistItem().size(); i++) {
+					System.out.println(wishlist.getWishlistItem().get(i).toString());
+				}
+
+			    String newToken = "Token: " + Authenticator.generateWebToken(new ObjectId().toString(), 1L, account);
+		    	return Utils.getJsonBuilder().toJson(newToken);
+			});
+			
+			spark.post("/removeWishlistItem", (request, response) -> {
+				String data = request.body();
+				
+				JsonElement jelement = new JsonParser().parse(data);
+			    JsonObject  jobject = jelement.getAsJsonObject();
+
+			    String accountId = Utils.getJsonFieldAsString(jobject, "accountId");
+			    String wishlistId = Utils.getJsonFieldAsString(jobject, "wishlistId");
+
+				Account account = (Account) Api.getHibernateQuery().getObject(Account.class, Integer.valueOf(accountId));
+				
+				AccountDAO.removeFromWishlist(account, Integer.valueOf(wishlistId));
+				Wishlist wishlist = AccountDAO.getWishlists(account);
+				
+				for (int i = 0; i < wishlist.getWishlistItem().size(); i++) {
+					System.out.println(wishlist.getWishlistItem().get(i).toString());
+				}
+
+			    String newToken = "Token: " + Authenticator.generateWebToken(new ObjectId().toString(), 1L, account);
+		    	return Utils.getJsonBuilder().toJson(newToken);
 			});
 			
 		});

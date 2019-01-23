@@ -9,6 +9,7 @@ public class HibernateQuery {
 	
 	private void openSession() {
 		session = Api.getSessionFactory().openSession();
+		session.clear();
 	}
 	
 	private void beginTransaction() {

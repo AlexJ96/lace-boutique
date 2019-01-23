@@ -14,6 +14,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 
 import api.core.Api;
 import api.sql.hibernate.dao.AccountDAO;
@@ -78,25 +79,18 @@ public class Authenticator {
         	request.add("account", accountElement);
         
         	Wishlist wishlist = AccountDAO.getWishlists(account);
-        	System.out.println(wishlist.toString());
-        	
-        	System.out.println(Utils.getJsonBuilder().toJson(wishlist));
-        	
-        	/*JsonElement wishListElement = Utils.getJsonBuilder().toJsonTree(wishlists);
-			if (wishListElement != null) 
-				request.add("wishlist", wishListElement);
-			else
-				request.addProperty("wishlist", "");*/
+        	JsonElement wishlistElement = Utils.getJsonBuilder().toJsonTree(wishlist);
+        	if (wishlistElement != null)
+        		request.add("wishlist", wishlistElement);
+        	else
+        		request.addProperty("wishlist", "");
         	
         	Cart cart = AccountDAO.getCart(account);
-        	System.out.println(cart.toString());
-        	System.out.println(Utils.getJsonBuilder().toJson(cart));
-        	
-        	/*JsonElement cartElement = Utils.getJsonBuilder().toJsonTree(cart);
-			if (cartElement != null)
-				request.add("cart", cartElement);
-			else
-				request.addProperty("cart", "");*/
+        	JsonElement cartElement = Utils.getJsonBuilder().toJsonTree(cart);
+        	if (cartElement != null)
+        		request.add("cart", cartElement);
+        	else
+        		request.addProperty("cart", "");
         	
         } else {
         	request.addProperty("account", "");
@@ -160,15 +154,26 @@ public class Authenticator {
                 throw new RuntimeException(e);
             }
             JsonObject payload = jt.getPayloadAsJsonObject();
-            TokenInfo t = new TokenInfo();
-            String issuer = payload.getAsJsonPrimitive("iss").getAsString();
-            String userIdString =  payload.getAsJsonObject("info").getAsJsonPrimitive("clientId").getAsString();
             
-            //Storing Account in the Token
-            String accountJson = payload.getAsJsonObject("info").getAsJsonPrimitive("account").getAsString();
-            if (StringUtils.isNotBlank(accountJson)) {
-                Account account = new Gson().fromJson(accountJson, Account.class);
-                t.setAccount(account);
+            TokenInfo t = new TokenInfo();
+            
+            String issuer = Utils.getJsonFieldAsString(payload, "iss");
+            
+            JsonObject info = payload.getAsJsonObject("info");
+            String userIdString =  Utils.getJsonFieldAsString(info, "clientId");
+            
+            try {
+            	JsonObject accountObject = info.getAsJsonObject("account");
+		        if (StringUtils.isNotBlank(accountObject.toString())) {
+		            Account account = new Gson().fromJson(accountObject.toString(), Account.class);
+		            t.setAccount(account);
+		        }
+            } catch (ClassCastException e) {
+                String accountObject = info.getAsJsonPrimitive("account").getAsString();
+                if (StringUtils.isNotBlank(accountObject)) {
+                    Account account = new Gson().fromJson(accountObject, Account.class);
+                    t.setAccount(account);
+                }
             }
             
         
@@ -198,11 +203,14 @@ public class Authenticator {
 		try {
 			tokenInfo = verifyToken(token);
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return 401;
 		}
 		
-		if (tokenInfo == null)
+		if (tokenInfo == null) {
+			System.out.println("Token Info = Null");
 			return 401;
+		}
 		
 		return 0;
     	

@@ -6,26 +6,22 @@ import java.util.Random;
 
 import org.hibernate.SessionFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import api.endpoint.EndPoint;
 import api.endpoint.endpoints.AccountEndPoint;
 import api.endpoint.endpoints.AuthToken;
 import api.endpoint.endpoints.ShopEndPoint;
 import api.endpoint.endpoints.TestEndPoint;
-import api.mail.EmailService;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.HibernateSession;
+import api.sql.hibernate.dao.AccountDAO;
+import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Brand;
 import api.sql.hibernate.entities.Colour;
 import api.sql.hibernate.entities.Item;
 import api.sql.hibernate.entities.ItemImage;
 import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.Size;
-import api.sql.hibernate.entities.Wishlist;
 import api.sql.hibernate.entities.WishlistItem;
-import api.utils.Utils;
 
 /**
  * Api Initializer - Sets up all API Endpoints
@@ -52,10 +48,12 @@ public class Api {
 		restContext = new RestContext(8080, basePath);
 		initializeEndPoints();
 		initializeHibernateSession();
+		
+		/*
+		 * Test Cases
+		 */
 		//populateMockDatabase();
 		//new EmailService().testEmail();
-
-		joinTest();
 	}
 	
 	private static void initializeEndPoints() {
@@ -146,15 +144,7 @@ public class Api {
 	}
 			
 	static void joinTest(){
-//		WishlistItem w = (WishlistItem)hibernateQuery.getObject(WishlistItem.class, 1);
-//		System.out.println(w.toString());
 		
-		Wishlist wl = (Wishlist) hibernateQuery.getObject(Wishlist.class, 1);
-//		System.out.println(wl.getWishlistItem().get(1));
-		
-
-
-		System.out.println(Utils.getJsonBuilder().toJson(wl));
 	}
 
 }

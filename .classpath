@@ -25,23 +25,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/Jason/.m2/repository/com/sun/mail/javax.mail/1.6.2/javax.mail-1.6.2.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="com.sun.mail"/>
-			<attribute name="maven.artifactId" value="javax.mail"/>
-			<attribute name="maven.version" value="1.6.2"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/Users/Jason/.m2/repository/org/apache/velocity/velocity/1.7/velocity-1.7.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="org.apache.velocity"/>
-			<attribute name="maven.artifactId" value="velocity"/>
-			<attribute name="maven.version" value="1.7"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
