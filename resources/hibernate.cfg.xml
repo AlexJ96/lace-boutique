@@ -18,7 +18,13 @@
 
 		<!-- Specifying Session Context -->
 		<property name="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext</property>
-
+  		<!-- <property name="hibernate.connection.release_mode">auto</property>
+		<property name="hibernate.current_session_context_class">jta</property>
+		<property name="hibernate.transaction.auto_close_session">true</property>
+  		<property name="hibernate.transaction.factory_class">
+					org.hibernate.transaction.JTATransactionFactory
+		</property>
+		<property name="hibernate.transaction.manager_lookup_class">org.hibernate.transaction.SunONETransactionManagerLookup</property> -->
 		<!-- Mapping With Model Class Containing Annotations -->
 		<mapping class="api.sql.hibernate.entities.Account" />
 		<mapping class="api.sql.hibernate.entities.Wishlist" />

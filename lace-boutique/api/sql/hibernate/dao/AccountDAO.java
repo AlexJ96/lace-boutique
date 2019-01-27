@@ -2,8 +2,11 @@ package api.sql.hibernate.dao;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
@@ -17,83 +20,121 @@ import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.Wishlist;
 import api.sql.hibernate.entities.WishlistItem;
 
-public class AccountDAO {
+public class AccountDAO extends HibernateDAO{
 	
-	private static Session session = Api.getSessionFactory().openSession();
-
+//	private static Session session = Api.getSessionFactory().openSession();
+	
 	@SuppressWarnings("unchecked")
 	public static Account getAccountById(int id) {
-		Criteria criteria = session.createCriteria(Account.class);
-		criteria.add(Restrictions.eq("id", id));
+		DAOQuery query = (session)->{
+			Criteria criteria = session.createCriteria(Account.class);
+			criteria.add(Restrictions.eq("id", id));
+			
+			List<Account> accounts = criteria.list();
+			return accounts.size() > 0 ? accounts.get(0) : null;
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
 		
-		List<Account> accounts = criteria.list();
-		return accounts.size() > 0 ? accounts.get(0) : null;
+		return (Account) d.query(session, query);
+		
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public static Account getAccountByEmail(String email) {
-		Criteria criteria = session.createCriteria(Account.class);
-		criteria.add(Restrictions.eq("email", email));
 		
-		List<Account> accounts = criteria.list();
-		return accounts.size() > 0 ? accounts.get(0) : null;
+		DAOQuery query = (session)->{
+			Criteria criteria = session.createCriteria(Account.class);
+			criteria.add(Restrictions.eq("email", email));
+			
+			List<Account> accounts = criteria.list();
+			return accounts.size() > 0 ? accounts.get(0) : null;			
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (Account) d.query(session, query);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public static Account getAccountByUsername(String username) {
-		Criteria criteria = session.createCriteria(Account.class);
-		criteria.add(Restrictions.eq("username", username));
-		
-		List<Account> accounts = criteria.list();
-		return accounts.size() > 0 ? accounts.get(0) : null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static List<Account> getAllAccounts() {
-		Criteria criteria = session.createCriteria(Account.class);
-		return criteria.list();
+		DAOQuery query = (session) -> {
+			Criteria criteria = session.createCriteria(Account.class);
+			criteria.add(Restrictions.eq("username", username));
+			
+			List<Account> accounts = criteria.list();
+			return accounts.size() > 0 ? accounts.get(0) : null;
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (Account)d.query(session, query);
 	}
 	
 	@SuppressWarnings("unchecked")
+	public static List<Account> getAllAccounts() {
+		
+		DAOQuery query = (session) -> {
+			Criteria criteria = session.createCriteria(Account.class);
+			return criteria.list();
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (List<Account>)d.query(session, query);
+		
+	}
+	
+	@Transactional
+	@SuppressWarnings("unchecked")
 	public static Wishlist getWishlists(Account account) {
-		session.flush();
-		Criteria wishlistCriteria = session.createCriteria(Wishlist.class);
-
-		wishlistCriteria.createAlias("account", "account");
-		wishlistCriteria.add(Restrictions.eq("account.id", account.getId()));
-		wishlistCriteria.addOrder(Order.desc("id"));
-        
-        List<Wishlist> wishLists = wishlistCriteria.list();
-        if (wishLists.isEmpty()) {
-        	return null;
-        }
-        return wishLists.get(0);
+		DAOQuery query = (session) -> {
+			Criteria wishlistCriteria = session.createCriteria(Wishlist.class);
+	
+			wishlistCriteria.createAlias("account", "account");
+			wishlistCriteria.add(Restrictions.eq("account.id", account.getId()));
+			wishlistCriteria.addOrder(Order.desc("id"));
+	        
+	        List<Wishlist> wishLists = wishlistCriteria.list();
+	        if (wishLists.isEmpty()) {
+	        	return null;
+	        }
+	        return wishLists.get(0);
+		};
+		
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (Wishlist)d.query(session, query);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public static Cart getCart(Account account) {
-		Criteria cartCriteria = session.createCriteria(Cart.class);
-
-		cartCriteria.createAlias("account", "account");
-		cartCriteria.add(Restrictions.eq("account.id", account.getId()));
-		cartCriteria.addOrder(Order.desc("id"));
-		
-        List<Cart> carts = cartCriteria.list();
-        if (carts.isEmpty()) {
-        	return null;
-        }
-        return carts.get(0);
+		DAOQuery query = (session) -> {
+			Criteria cartCriteria = session.createCriteria(Cart.class);
+	
+			cartCriteria.createAlias("account", "account");
+			cartCriteria.add(Restrictions.eq("account.id", account.getId()));
+			cartCriteria.addOrder(Order.desc("id"));
+			
+	        List<Cart> carts = cartCriteria.list();
+	        if (carts.isEmpty()) {
+	        	return null;
+	        }
+	        return carts.get(0);
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (Cart)d.query(session, query);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public static void removeFromCart(Account account, int cartItemId) {
-		Criteria cartCriteria = session.createCriteria(CartItem.class);
-
-		cartCriteria.createAlias("cart.account", "account");
-		cartCriteria.add(Restrictions.eq("account.id", account.getId()));
-		cartCriteria.add(Restrictions.eq("id", cartItemId));
+				
+		DAOQuery query = (session) -> {
+			Criteria cartCriteria = session.createCriteria(CartItem.class);
+	
+			cartCriteria.createAlias("cart.account", "account");
+			cartCriteria.add(Restrictions.eq("account.id", account.getId()));
+			cartCriteria.add(Restrictions.eq("id", cartItemId));
+			
+	        List<CartItem> cartItems = cartCriteria.list();
+	        return cartItems;
+		};
 		
-        List<CartItem> cartItems = cartCriteria.list();
+		Session session = Api.getSessionFactory().getCurrentSession();
+		List<CartItem> cartItems = (List<CartItem>)d.query(session, query);
+		
         if (!cartItems.isEmpty()) {
         	System.out.println(cartItems.get(0).toString());
         	Api.getHibernateQuery().deleteObject(cartItems.get(0));
@@ -101,15 +142,21 @@ public class AccountDAO {
 	}
 	
 	
-	
+	@Transactional
 	public static void removeFromWishlist(Account account, int wishlistId) {
-		Criteria wishlistCriteria = session.createCriteria(WishlistItem.class);
-
-		wishlistCriteria.createAlias("wishlist.account", "account");
-		wishlistCriteria.add(Restrictions.eq("account.id", account.getId()));
-		wishlistCriteria.add(Restrictions.eq("id", wishlistId));
 		
-        List<WishlistItem> wishlistItems = wishlistCriteria.list();
+		DAOQuery query = (session) -> {
+			Criteria wishlistCriteria = session.createCriteria(WishlistItem.class);
+	
+			wishlistCriteria.createAlias("wishlist.account", "account");
+			wishlistCriteria.add(Restrictions.eq("account.id", account.getId()));
+			wishlistCriteria.add(Restrictions.eq("id", wishlistId));
+			
+	        return wishlistCriteria.list();
+		};
+        Session session = Api.getSessionFactory().getCurrentSession();
+        List<WishlistItem> wishlistItems = (List<WishlistItem>)d.query(session, query);
+        
         if (!wishlistItems.isEmpty()) {
         	System.out.println(wishlistItems.get(0).toString());
         	Api.getHibernateQuery().deleteObject(wishlistItems.get(0));
@@ -119,60 +166,62 @@ public class AccountDAO {
 	}
 	
 	public static void addToWishlist(Account account, int itemId) {
-		/**
-		 * ItemImage
-		 */
-		Criteria itemImageCriteria = session.createCriteria(ItemImage.class);
-
-		itemImageCriteria.createAlias("item", "item");
-		itemImageCriteria.add(Restrictions.eq("item.id", Integer.valueOf(itemId)));
-		itemImageCriteria.add(Restrictions.eq("defaultImage", true));
+		DAOQuery query = (session) -> {
+			Criteria itemImageCriteria = session.createCriteria(ItemImage.class);
+	
+			itemImageCriteria.createAlias("item", "item");
+			itemImageCriteria.add(Restrictions.eq("item.id", Integer.valueOf(itemId)));
+			itemImageCriteria.add(Restrictions.eq("defaultImage", true));
+			
+			List<ItemImage> itemImageList = itemImageCriteria.list();
+			
+			if (itemImageList.isEmpty()) {
+				System.out.println("ItemImageList is empty");
+				return null;
+			}
+			
+			ItemImage itemImage = itemImageList.get(0);
+			Colour colour = itemImage.getColour();
+			
+			Criteria itemSpecCriteria = session.createCriteria(ItemSpec.class);
+			
+			itemSpecCriteria.createAlias("item", "item");
+			itemSpecCriteria.createAlias("colour", "colour");
+			itemSpecCriteria.add(Restrictions.eq("item.id", Integer.valueOf(itemId)));
+			itemSpecCriteria.add(Restrictions.eq("colour.id", colour.getId()));
+			
+			List<ItemSpec> itemSpecList = itemSpecCriteria.list();
+			
+			if (itemSpecList.isEmpty()) {
+				System.out.println("ItemSpecList is empty");
+				return null;
+			}
+			ItemSpec itemSpec = itemSpecList.get(0);
+			
+			Criteria wishlistCriteria = session.createCriteria(Wishlist.class);
+			
+			wishlistCriteria.createAlias("account", "account");
+			wishlistCriteria.add(Restrictions.eq("account.id", account.getId()));
+			
+			List<Wishlist> wishlistList = wishlistCriteria.list();
+			if (wishlistList.isEmpty()) {
+				System.out.println("WishList is empty");
+				return null;
+			}
+			Wishlist wishlist = wishlistList.get(0);
+			
+			WishlistItem wishlistItem = new WishlistItem();
+			wishlistItem.setWishlist(wishlist);
+			wishlistItem.setItemSpec(itemSpec);
+			
+			Api.getHibernateQuery().saveObject(wishlistItem);
+			return wishlistItem;
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		WishlistItem wishlistItem = (WishlistItem) d.query(session, query);
 		
-		List<ItemImage> itemImageList = itemImageCriteria.list();
-		if (itemImageList.isEmpty()) {
-			System.out.println("ItemImageList is empty");
-			return;
-		}
-		
-		ItemImage itemImage = itemImageList.get(0);
-		Colour colour = itemImage.getColour();
-		
-		/**
-		 * ItemSpec
-		 */
-		Criteria itemSpecCriteria = session.createCriteria(ItemSpec.class);
-		
-		itemSpecCriteria.createAlias("item", "item");
-		itemSpecCriteria.createAlias("colour", "colour");
-		itemSpecCriteria.add(Restrictions.eq("item.id", Integer.valueOf(itemId)));
-		itemSpecCriteria.add(Restrictions.eq("colour.id", colour.getId()));
-		
-		List<ItemSpec> itemSpecList = itemSpecCriteria.list();
-		if (itemSpecList.isEmpty()) {
-			System.out.println("ItemSpecList is empty");
-			return;
-		}
-		ItemSpec itemSpec = itemSpecList.get(0);
-		
-		/**
-		 * Wishlist
-		 */
-		Criteria wishlistCriteria = session.createCriteria(Wishlist.class);
-		
-		wishlistCriteria.createAlias("account", "account");
-		wishlistCriteria.add(Restrictions.eq("account.id", account.getId()));
-		
-		List<Wishlist> wishlistList = wishlistCriteria.list();
-		if (wishlistList.isEmpty()) {
-			System.out.println("WishList is empty");
-			return;
-		}
-		Wishlist wishlist = wishlistList.get(0);
-		
-		WishlistItem wishlistItem = new WishlistItem();
-		wishlistItem.setWishlist(wishlist);
-		wishlistItem.setItemSpec(itemSpec);
-		
-		Api.getHibernateQuery().saveObject(wishlistItem);
+		if (wishlistItem == null) {
+			System.out.println("Cannot add item to wishlist.");
+		}		
 	}
 }
