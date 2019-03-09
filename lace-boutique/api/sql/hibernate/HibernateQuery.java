@@ -66,7 +66,7 @@ public class HibernateQuery {
 		return result;
 	}
 	
-	@SuppressWarnings("finally")
+	@SuppressWarnings({ "finally", "rawtypes" })
 	public Object getObject(Class clazz, Integer id) {
 		Object returnObject = null;
 		try {

@@ -3,7 +3,7 @@ package api.auth;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
-import api.sql.hibernate.entities.Account;
+import api.entities.Token;
 
 
 public class TokenInfo {
@@ -11,7 +11,7 @@ public class TokenInfo {
 	private ObjectId userId;
     private DateTime issued;
     private DateTime expires;
-    private Account account;
+    private Token token;
     
 	public ObjectId getUserId() {
 		return userId;
@@ -36,13 +36,13 @@ public class TokenInfo {
 	public void setExpires(DateTime expires) {
 		this.expires = expires;
 	}
-	
-	public Account getAccount() {
-		return account;
+
+	public Token getToken() {
+		return token;
 	}
-	
-	public void setAccount(Account account) {
-		this.account = account;
+
+	public void setToken(Token token) {
+		this.token = token;
 	}
     
 }

@@ -10,7 +10,7 @@
 
 		<!-- Database Connection Settings -->
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/lace_db</property>
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/lace_boutique</property>
 		<property name="hibernate.connection.username">root</property>
 		<property name="hibernate.connection.password"></property>
 		<property name="connection.autocommit">true</property>
@@ -25,21 +25,24 @@
 					org.hibernate.transaction.JTATransactionFactory
 		</property>
 		<property name="hibernate.transaction.manager_lookup_class">org.hibernate.transaction.SunONETransactionManagerLookup</property> -->
-		<!-- Mapping With Model Class Containing Annotations -->
+		
 		<mapping class="api.sql.hibernate.entities.Account" />
 		<mapping class="api.sql.hibernate.entities.Wishlist" />
+		
 		<mapping class="api.sql.hibernate.entities.WishlistItem" />
 		<mapping class="api.sql.hibernate.entities.Item" />
 		<mapping class="api.sql.hibernate.entities.ItemSpec" />
 		<mapping class="api.sql.hibernate.entities.ItemImage" />
-		<mapping class="api.sql.hibernate.entities.Order" />
-		<mapping class="api.sql.hibernate.entities.OrderItem" />
 		<mapping class="api.sql.hibernate.entities.Size" />
 		<mapping class="api.sql.hibernate.entities.Colour" />
 		<mapping class="api.sql.hibernate.entities.Brand" />
-		<mapping class="api.sql.hibernate.entities.WorkStatus" />
+		
+		<!--<mapping class="api.sql.hibernate.entities.Order" />
+		<mapping class="api.sql.hibernate.entities.OrderItem" />-->
+		
+		<!-- <mapping class="api.sql.hibernate.entities.WorkStatus" />
 		<mapping class="api.sql.hibernate.entities.Cart" />
 		<mapping class="api.sql.hibernate.entities.CartItem" />
-		<mapping class="api.sql.hibernate.entities.Discount" />
+		<mapping class="api.sql.hibernate.entities.Discount" /> -->
 	</session-factory>
 </hibernate-configuration>

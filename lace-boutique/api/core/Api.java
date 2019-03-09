@@ -1,9 +1,12 @@
 package api.core;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Random;
 
+import org.bson.types.ObjectId;
 import org.hibernate.SessionFactory;
 
 import api.endpoint.EndPoint;
@@ -11,9 +14,10 @@ import api.endpoint.endpoints.AccountEndPoint;
 import api.endpoint.endpoints.AuthToken;
 import api.endpoint.endpoints.ShopEndPoint;
 import api.endpoint.endpoints.TestEndPoint;
+import api.services.TokenService;
+import api.services.WishlistService;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.HibernateSession;
-import api.sql.hibernate.dao.AccountDAO;
 import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Brand;
 import api.sql.hibernate.entities.Colour;
@@ -21,7 +25,7 @@ import api.sql.hibernate.entities.Item;
 import api.sql.hibernate.entities.ItemImage;
 import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.Size;
-import api.sql.hibernate.entities.WishlistItem;
+import api.sql.hibernate.entities.Wishlist;
 
 /**
  * Api Initializer - Sets up all API Endpoints
@@ -48,6 +52,38 @@ public class Api {
 		restContext = new RestContext(8080, basePath);
 		initializeEndPoints();
 		initializeHibernateSession();
+		
+		Account account = new Account();
+		account.setId(25);
+		account.setTitle("Mr");
+		account.setFirstName("Testing");
+		account.setLastName("Testing");
+		account.setEmailAddress("main@test.com");
+		account.setGender("Male");
+		account.setDateOfBirth(new GregorianCalendar(1996, 4, 28));
+		account.setPassword("Test123!");
+		account.setSalesInfo("Email");
+		account.setNewStuffInfo("Email");
+		account.setNewsletter(true);
+		account.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+		account.setCreatedFrom("IP");
+		account.setLastLogged(new Timestamp(System.currentTimeMillis()));
+		account.setLoggedFrom("IP");
+		
+		String token = TokenService.generateToken(new ObjectId().toString(), 1L, account);
+		System.out.println(token);
+		
+		WishlistService wishlistService = new WishlistService();
+		Wishlist wishlist = wishlistService.getWishlistForAccount(account);
+		//System.out.println(wishlist.getWishlistItem().get(0));
+		
+		token = wishlistService.addToWishlist(account, 1);
+		
+		//token = wishlistService.removeFromWishlist(account, wishlist.getWishlistItem().get(0).getId());
+		System.out.println(token);
+		
+//		hibernateQuery.saveOrUpdateObject(account);
+		
 		
 		/*
 		 * Test Cases

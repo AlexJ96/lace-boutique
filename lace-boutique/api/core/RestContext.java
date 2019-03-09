@@ -3,8 +3,8 @@ package api.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import api.auth.Authenticator;
 import api.endpoint.EndPoint;
+import api.services.TokenService;
 import api.utils.Utils;
 import spark.Service;
 
@@ -56,12 +56,16 @@ public class RestContext {
             }
             
             if (needsAuth == true) {
-	            String token = request.headers("LBT");
-				int responseId = Authenticator.validateAuthToken(token);
-				
-				if (responseId != 0) {
-					spark.halt(responseId, Utils.getJsonBuilder().toJson("Unauthorised Access"));
-				}
+            	if (!request.headers().contains("LBT")) {
+            		spark.halt(200, Utils.getJsonBuilder().toJson("Missing LBT Header"));
+            	} else {
+		            String token = request.headers("LBT").substring(14).trim();
+					int responseId = TokenService.validateToken(token);
+					
+					if (responseId != 0) {
+						spark.halt(responseId, Utils.getJsonBuilder().toJson("Unauthorised Access"));
+					}
+            	}
             }
             System.out.println(request.url());
     	});
