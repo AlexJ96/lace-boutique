@@ -2,7 +2,6 @@ package api.sql.hibernate.dao;
 
 import java.util.List;
 
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
@@ -10,6 +9,7 @@ import org.hibernate.criterion.Restrictions;
 
 import api.core.Api;
 import api.sql.hibernate.entities.Account;
+import api.sql.hibernate.entities.Address;
 import api.sql.hibernate.entities.Cart;
 import api.sql.hibernate.entities.CartItem;
 
@@ -68,6 +68,21 @@ public class AccountDAO extends HibernateDAO{
 		Session session = Api.getSessionFactory().getCurrentSession();
 		return (List<Account>)d.query(session, query);
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Address> getAddressesForAccount(Account account) {
+		DAOQuery query = (session) -> {
+			Criteria criteria = session.createCriteria(Address.class);
+			
+			criteria.createAlias("account", "account");
+			criteria.add(Restrictions.eq("account.id", account.getId()));
+			
+			List<Address> addresses = criteria.list();
+			return addresses;
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (List<Address>)d.query(session, query);
 	}
 	
 	@SuppressWarnings("unchecked")

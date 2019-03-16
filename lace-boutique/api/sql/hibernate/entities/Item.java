@@ -1,6 +1,7 @@
 package api.sql.hibernate.entities;
 
-import java.util.Date;
+import java.sql.Timestamp;
+import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,7 +45,7 @@ public class Item {
 	
 	@Column(name = "created")
 	@Temporal(TemporalType.DATE)
-	private Date created;
+	private Calendar created;
 
 	public int getId() {
 		return id;

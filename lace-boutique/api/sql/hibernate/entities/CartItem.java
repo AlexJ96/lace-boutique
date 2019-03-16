@@ -31,6 +31,9 @@ public class CartItem {
 	@OneToOne
 	@JoinColumn(name = "item_spec_id")
 	private ItemSpec itemSpec;
+	
+	@Column(name = "quantity")
+	private int quantity;
 
 	public int getId() {
 		return id;
@@ -56,10 +59,17 @@ public class CartItem {
 		this.itemSpec = itemSpec;
 	}
 
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
 	@Override
 	public String toString() {
-		return "CartItem [id=" + id + ", cart=" + cart + ", itemSpec="
-				+ itemSpec + "]";
+		return "CartItem [id=" + id + ", cart=" + cart + ", itemSpec=" + itemSpec + ", quantity=" + quantity + "]";
 	}
 	
 }

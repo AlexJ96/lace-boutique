@@ -1,5 +1,6 @@
 package api.sql.hibernate.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -47,6 +48,10 @@ public class Cart {
 	
 	public List<CartItem> getCartItems(){
 		return this.cartItems;
+	}
+	
+	public void setCartItems(ArrayList<CartItem> cartItems) {
+		this.cartItems = cartItems;
 	}
 
 	@Override

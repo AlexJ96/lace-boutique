@@ -218,6 +218,20 @@ public class ShopDAO extends HibernateDAO{
 	}
 	
 	@SuppressWarnings("unchecked")
+	public static List<ItemSpec> getSpecsForItem(int itemId) {
+		DAOQuery query = (session) -> {
+			Criteria criteria = session.createCriteria(ItemSpec.class);
+			criteria.createAlias("item", "item");
+			criteria.add(Restrictions.eq("item.id", itemId));
+			
+			List<ItemSpec> itemSpecs = criteria.list();
+			return itemSpecs;
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (List<ItemSpec>) d.query(session, query);
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static Colour getColour(String colour) {
 		DAOQuery query = (session)->{
 			Criteria criteria = session.createCriteria(Colour.class);

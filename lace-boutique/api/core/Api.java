@@ -70,17 +70,17 @@ public class Api {
 		account.setLastLogged(new Timestamp(System.currentTimeMillis()));
 		account.setLoggedFrom("IP");
 		
-		String token = TokenService.generateToken(new ObjectId().toString(), 1L, account);
-		System.out.println(token);
+		//String token = TokenService.generateToken(new ObjectId().toString(), 1L, account);
+		//System.out.println(token);
 		
 		WishlistService wishlistService = new WishlistService();
 		Wishlist wishlist = wishlistService.getWishlistForAccount(account);
 		//System.out.println(wishlist.getWishlistItem().get(0));
 		
-		token = wishlistService.addToWishlist(account, 1);
+		//token = wishlistService.addToWishlist(account, 1);
 		
 		//token = wishlistService.removeFromWishlist(account, wishlist.getWishlistItem().get(0).getId());
-		System.out.println(token);
+		//System.out.println(token);
 		
 //		hibernateQuery.saveOrUpdateObject(account);
 		

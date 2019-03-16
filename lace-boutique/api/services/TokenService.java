@@ -14,6 +14,8 @@ import com.google.gson.JsonObject;
 
 import api.entities.Token;
 import api.sql.hibernate.entities.Account;
+import api.sql.hibernate.entities.Cart;
+import api.sql.hibernate.entities.Wishlist;
 import api.utils.StringUtils;
 import api.utils.Utils;
 import net.oauth.jsontoken.JsonToken;
@@ -34,9 +36,9 @@ public class TokenService {
     private static Calendar cal = Calendar.getInstance();
     private static Gson gson = new Gson();
     private static WishlistService wishlistService = new WishlistService();
-    
+    private static CartService cartService = new CartService();
 
-	public static String generateToken(String clientId, Long duration, Account account) {
+	public static String generateToken(String clientId, Long duration, Account account, Wishlist wishlist, Cart cart) {
 		HmacSHA256Signer signer;
 		try {
 			signer = new HmacSHA256Signer(ISSUER, null, SIGNING_KEY.getBytes());
@@ -58,7 +60,18 @@ public class TokenService {
         	account = new Account();
         }
     	token.setAccount(account);
-    	token.setWishlist(wishlistService.getWishlistForAccount(account));
+    	
+    	if (wishlist == null) {
+    		token.setWishlist(wishlistService.getWishlistForAccount(account));
+    	} else {
+    		token.setWishlist(wishlist);
+    	}
+    	
+    	if (cart == null) {
+    		token.setCart(cartService.getCartForAccount(account));
+    	} else {
+    		token.setCart(cart);
+    	}
     	
     	JsonElement jsonElement = Utils.getJsonBuilder().toJsonTree(token);
     	request.add("token", jsonElement);
@@ -178,15 +191,11 @@ public class TokenService {
     }
 	
 	public static String refreshToken(String token) {
-		if (verifyToken(token)) {
+//		if (verifyToken(token)) {
 			Token tokenObject = decodeToken(token);
-			if (tokenObject.getAccount() != null) {
-				return generateToken(new ObjectId().toString(), 1L, tokenObject.getAccount());
-			} else {
-				return generateToken(new ObjectId().toString(), 1L, null);
-			}
-		} else {
-			return generateToken(new ObjectId().toString(), 1L, null);
-		}
+			return generateToken(new ObjectId().toString(), 1L, tokenObject.getAccount(), tokenObject.getWishlist(), tokenObject.getCart());
+//		} else {
+//			return generateToken(new ObjectId().toString(), 1L, null, null, null);
+//		}
     }
 }

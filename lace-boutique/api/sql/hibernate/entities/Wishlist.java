@@ -1,5 +1,6 @@
 package api.sql.hibernate.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -9,14 +10,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import com.google.gson.annotations.Expose;
-
-import api.annotation.GsonIgnore;
 
 @Entity
 @Table(name = "wishlist")
@@ -54,6 +50,10 @@ public class Wishlist {
 	
 	public List<WishlistItem> getWishlistItem(){
 		return this.wishlistItems;
+	}
+	
+	public void setWishlistItemList(ArrayList<WishlistItem> wishlistItemList) {
+		this.wishlistItems = wishlistItemList;
 	}
 
 	@Override

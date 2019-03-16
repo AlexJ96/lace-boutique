@@ -27,9 +27,11 @@
 		<property name="hibernate.transaction.manager_lookup_class">org.hibernate.transaction.SunONETransactionManagerLookup</property> -->
 		
 		<mapping class="api.sql.hibernate.entities.Account" />
-		<mapping class="api.sql.hibernate.entities.Wishlist" />
+		<mapping class="api.sql.hibernate.entities.Address" />
 		
+		<mapping class="api.sql.hibernate.entities.Wishlist" />
 		<mapping class="api.sql.hibernate.entities.WishlistItem" />
+		
 		<mapping class="api.sql.hibernate.entities.Item" />
 		<mapping class="api.sql.hibernate.entities.ItemSpec" />
 		<mapping class="api.sql.hibernate.entities.ItemImage" />
@@ -37,12 +39,13 @@
 		<mapping class="api.sql.hibernate.entities.Colour" />
 		<mapping class="api.sql.hibernate.entities.Brand" />
 		
+		<mapping class="api.sql.hibernate.entities.Cart" />
+		<mapping class="api.sql.hibernate.entities.CartItem" />
+		
 		<!--<mapping class="api.sql.hibernate.entities.Order" />
 		<mapping class="api.sql.hibernate.entities.OrderItem" />-->
 		
 		<!-- <mapping class="api.sql.hibernate.entities.WorkStatus" />
-		<mapping class="api.sql.hibernate.entities.Cart" />
-		<mapping class="api.sql.hibernate.entities.CartItem" />
 		<mapping class="api.sql.hibernate.entities.Discount" /> -->
 	</session-factory>
 </hibernate-configuration>

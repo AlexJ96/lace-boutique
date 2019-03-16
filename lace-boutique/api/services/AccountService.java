@@ -1,6 +1,7 @@
 package api.services;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.mindrot.jbcrypt.BCrypt;
@@ -8,6 +9,9 @@ import org.mindrot.jbcrypt.BCrypt;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.dao.AccountDAO;
 import api.sql.hibernate.entities.Account;
+import api.sql.hibernate.entities.Address;
+import api.sql.hibernate.entities.Cart;
+import api.sql.hibernate.entities.Wishlist;
 import api.utils.Responses;
 import api.utils.SecureUtils;
 import api.utils.StringUtils;
@@ -49,11 +53,37 @@ public class AccountService {
 		account.setLoggedFrom("IP");
 	    
 	    if(saveAccount(account)){
-	    	String newToken = "Token: " + TokenService.generateToken(new ObjectId().toString(), 1L, account);
+			createWishlistForAccount(account);
+			createCartForAccount(account);
+	    	String newToken = "Token: " + TokenService.generateToken(new ObjectId().toString(), 1L, account, null, null);
 	    	return Utils.getJsonBuilder().toJson(newToken);
 	    } else {
 	    	return Utils.getJsonBuilder().toJson(Responses.FAILURE_CREATING_ACCOUNT.getResponse());
 	    }
+	}
+	
+	public List<Address> getAddressesForAccount(Account account) {
+		return AccountDAO.getAddressesForAccount(account);
+	}
+	
+	/**
+	 * Creates wishlist for account upon account creation
+	 * @param account
+	 */
+	public void createWishlistForAccount(Account account) {
+		Wishlist wishlist = new Wishlist();
+		wishlist.setAccount(account);
+		hibernateQuery.saveOrUpdateObject(wishlist);
+	}
+	
+	/**
+	 * Creates cart for account upon account creation
+	 * @param account
+	 */
+	public void createCartForAccount(Account account) {
+		Cart cart = new Cart();
+		cart.setAccount(account);
+		hibernateQuery.saveOrUpdateObject(cart);
 	}
 	
 	/**
@@ -61,7 +91,7 @@ public class AccountService {
 	 * @return
 	 */
 	public String attemptLogout() {
-		String newToken = "Token: " + TokenService.generateToken(new ObjectId().toString(), 1L, null);
+		String newToken = "Token: " + TokenService.generateToken(new ObjectId().toString(), 1L, null, null, null);
     	return Utils.getJsonBuilder().toJson(newToken);
 	}
 	
@@ -85,7 +115,7 @@ public class AccountService {
 	    saveAccount(account);
 	    
 	    if (BCrypt.checkpw(unencryptedPassword, account.getPassword())){
-	    	String newToken = "Token: " + TokenService.generateToken(new ObjectId().toString(), 1L, account);
+	    	String newToken = "Token: " + TokenService.generateToken(new ObjectId().toString(), 1L, account, null, null);
 	    	return Utils.getJsonBuilder().toJson(newToken);
 	    } else {
 	    	return Utils.getJsonBuilder().toJson(Responses.INVAID_EMAIL_OR_PASSWORD.getResponse());
@@ -103,7 +133,7 @@ public class AccountService {
 		} catch (Exception e) {
 			return Utils.getJsonBuilder().toJson(Responses.FAILED_TO_SAVE_ACCOUNT.getResponse());
 		}
-		String newToken = "Token: " + TokenService.generateToken(new ObjectId().toString(), 1L, account);
+		String newToken = "Token: " + TokenService.generateToken(new ObjectId().toString(), 1L, account, null, null);
     	return Utils.getJsonBuilder().toJson(newToken);
 	}
 	
