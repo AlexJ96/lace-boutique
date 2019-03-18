@@ -42,10 +42,11 @@
 		<mapping class="api.sql.hibernate.entities.Cart" />
 		<mapping class="api.sql.hibernate.entities.CartItem" />
 		
-		<!--<mapping class="api.sql.hibernate.entities.Order" />
-		<mapping class="api.sql.hibernate.entities.OrderItem" />-->
+		<mapping class="api.sql.hibernate.entities.Order" />
+		<mapping class="api.sql.hibernate.entities.OrderItem" />
+		<mapping class="api.sql.hibernate.entities.OrderDetails" />
+		<mapping class="api.sql.hibernate.entities.Discount" />
 		
-		<!-- <mapping class="api.sql.hibernate.entities.WorkStatus" />
-		<mapping class="api.sql.hibernate.entities.Discount" /> -->
+		<!-- <mapping class="api.sql.hibernate.entities.WorkStatus" />-->
 	</session-factory>
 </hibernate-configuration>

@@ -20,14 +20,17 @@ public class Discount {
 	@Column(name = "id")
 	private int id;
 	
-	@Column(name = "code")
-	private String code;
+	@Column(name = "discount_code")
+	private String discountCode;
 	
-	@Column(name = "amount")
-	private double amount;
+	@Column(name = "min_spend")
+	private double minSpend;
 	
-	@Column(name = "percentage")
-	private boolean percentage;
+	@Column(name = "amount_off")
+	private double amountOff;
+	
+	@Column(name = "free_delivery")
+	private boolean freeDelivery;
 	
 	@Column(name = "valid_from")
 	@Temporal(TemporalType.DATE)
@@ -37,58 +40,81 @@ public class Discount {
 	@Temporal(TemporalType.DATE)
 	private Date validTo;
 
-	public int getId() {
+	public int getId()
+	{
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(int id)
+	{
 		this.id = id;
 	}
 
-	public String getCode() {
-		return code;
+	public String getDiscountCode()
+	{
+		return discountCode;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setDiscountCode(String discountCode)
+	{
+		this.discountCode = discountCode;
 	}
 
-	public double getAmount() {
-		return amount;
+	public double getMinSpend()
+	{
+		return minSpend;
 	}
 
-	public void setAmount(double amount) {
-		this.amount = amount;
+	public void setMinSpend(double minSpend)
+	{
+		this.minSpend = minSpend;
 	}
 
-	public boolean isPercentage() {
-		return percentage;
+	public double getAmountOff()
+	{
+		return amountOff;
 	}
 
-	public void setPercentage(boolean percentage) {
-		this.percentage = percentage;
+	public void setAmountOff(double amountOff)
+	{
+		this.amountOff = amountOff;
 	}
 
-	public Date getValidFrom() {
+	public boolean isFreeDelivery()
+	{
+		return freeDelivery;
+	}
+
+	public void setFreeDelivery(boolean freeDelivery)
+	{
+		this.freeDelivery = freeDelivery;
+	}
+
+	public Date getValidFrom()
+	{
 		return validFrom;
 	}
 
-	public void setValidFrom(Date validFrom) {
+	public void setValidFrom(Date validFrom)
+	{
 		this.validFrom = validFrom;
 	}
 
-	public Date getValidTo() {
+	public Date getValidTo()
+	{
 		return validTo;
 	}
 
-	public void setValidTo(Date validTo) {
+	public void setValidTo(Date validTo)
+	{
 		this.validTo = validTo;
 	}
 
 	@Override
-	public String toString() {
-		return "Discount [id=" + id + ", code=" + code + ", amount=" + amount + ", percentage=" + percentage
-				+ ", validFrom=" + validFrom + ", validTo=" + validTo + "]";
+	public String toString()
+	{
+		return "Discount [id=" + id + ", discountCode=" + discountCode + ", minSpend=" + minSpend + ", amountOff=" + amountOff + ", freeDelivery="
+			+ freeDelivery + ", validFrom=" + validFrom + ", validTo=" + validTo + "]";
 	}
 	
 }

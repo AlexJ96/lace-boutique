@@ -8,22 +8,19 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.CountProjection;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.stat.SessionStatistics;
 
 import api.core.Api;
 import api.sql.hibernate.ProjectionsExtension;
-import api.sql.hibernate.SumProjection;
 import api.sql.hibernate.dto.DTOList;
 import api.sql.hibernate.dto.FilterDTO;
-import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Brand;
 import api.sql.hibernate.entities.Colour;
+import api.sql.hibernate.entities.Discount;
 import api.sql.hibernate.entities.Item;
 import api.sql.hibernate.entities.ItemImage;
 import api.sql.hibernate.entities.ItemSpec;
@@ -229,6 +226,19 @@ public class ShopDAO extends HibernateDAO{
 		};
 		Session session = Api.getSessionFactory().getCurrentSession();
 		return (List<ItemSpec>) d.query(session, query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Discount checkDiscountCode(String discountCode) {
+		DAOQuery query = (session) -> {
+			Criteria criteria = session.createCriteria(Discount.class);
+			criteria.add(Restrictions.eq("discountCode", discountCode));
+			
+			List<Discount> discounts = criteria.list();
+			return discounts.size() > 0 ? discounts.get(0) : null;
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (Discount) d.query(session, query);
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -1,17 +1,16 @@
 package api.endpoint.endpoints;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.bson.types.ObjectId;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.stripe.Stripe;
-import com.stripe.model.Charge;
 
 import api.endpoint.EndPoint;
 import api.services.AccountService;
 import api.services.CartService;
+import api.services.OrderService;
+import api.services.TokenService;
 import api.services.WishlistService;
 import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Cart;
@@ -25,6 +24,7 @@ public class AccountEndPoint implements EndPoint {
 	private AccountService accountService = new AccountService();
 	private WishlistService wishlistService = new WishlistService();
 	private CartService cartService = new CartService();
+	private OrderService orderService = new OrderService();
 	private Gson gson = new Gson();
 	
 	public AccountEndPoint() {
@@ -138,23 +138,15 @@ public class AccountEndPoint implements EndPoint {
 			});
 			
 			spark.post("/confirm-order", (request, response) -> {
-				JsonObject object = new JsonParser().parse(request.body()).getAsJsonObject();
-				JsonObject paymentObject = (JsonObject) object.get("paymentToken");
-				JsonObject cardObject = (JsonObject) paymentObject.get("card");
-				
-				System.out.println(object);
-				
-				Stripe.apiKey = "sk_test_PmT0QU17uI9pLou57Acf5kzv";
-
-				Map<String, Object> params = new HashMap<String, Object>();
-				params.put("amount", 999);
-				params.put("currency", "gbp");
-				params.put("source", "tok_visa");
-				Charge charge = Charge.create(params);
-				
-				System.out.println(charge);
-				
-				return "";
+				boolean success = orderService.confirmOrder(request.body());
+				if (success) {
+					JsonObject object = new JsonParser().parse(request.body()).getAsJsonObject();
+					Account account = gson.fromJson(object.get("account"), Account.class);
+					
+					String newToken = "Token: " + TokenService.generateToken(new ObjectId().toString(), 1L, account, null, null);
+					return Utils.getJsonBuilder().toJson(newToken);
+				}
+				return Utils.getJsonBuilder().toJson(orderService.confirmOrder(request.body()));
 			});
 			
 		});

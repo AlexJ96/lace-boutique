@@ -39,6 +39,11 @@ public class ShopEndPoint implements EndPoint {
 				return Utils.getJsonBuilder().toJson(shopService.getSpecsForItem(object.get("ItemId").getAsInt()));
 			});
 			
+			spark.post("/apply-discount", (request, response) -> {
+				JsonObject object = new JsonParser().parse(request.body()).getAsJsonObject();
+				return Utils.getJsonBuilder().toJson(shopService.applyDiscount(object.get("DiscountCode").toString(), object.get("TotalPrice").getAsDouble()));
+			});
+			
 			spark.post("/all-items-brand", (request, response) -> {
 				JsonElement jelement = new JsonParser().parse(request.body());
 			    JsonObject  jobject = jelement.getAsJsonObject();

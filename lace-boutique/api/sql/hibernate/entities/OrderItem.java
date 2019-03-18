@@ -23,59 +23,56 @@ public class OrderItem {
 	private Order order;
 
 	@OneToOne
-	@JoinColumn(name = "item_id")
-	private Item item;
+	@JoinColumn(name = "item_spec_id")
+	private ItemSpec itemSpec;
 	
-	@Column(name = "item_amount")
-	private int itemAmount;
-	
-	@Column(name = "item_total")
-	private double itemTotal;
+	@Column(name = "quantity")
+	private int quantity;
 
-	public int getId() {
+	public int getId()
+	{
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(int id)
+	{
 		this.id = id;
 	}
 
-	public Order getOrder() {
+	public Order getOrder()
+	{
 		return order;
 	}
 
-	public void setOrder(Order order) {
+	public void setOrder(Order order)
+	{
 		this.order = order;
 	}
 
-	public Item getItem() {
-		return item;
+	public ItemSpec getItemSpec()
+	{
+		return itemSpec;
 	}
 
-	public void setItem(Item item) {
-		this.item = item;
+	public void setItemSpec(ItemSpec itemSpec)
+	{
+		this.itemSpec = itemSpec;
 	}
 
-	public int getItemAmount() {
-		return itemAmount;
+	public int getQuantity()
+	{
+		return quantity;
 	}
 
-	public void setItemAmount(int itemAmount) {
-		this.itemAmount = itemAmount;
-	}
-
-	public double getItemTotal() {
-		return itemTotal;
-	}
-
-	public void setItemTotal(double itemTotal) {
-		this.itemTotal = itemTotal;
+	public void setQuantity(int quantity)
+	{
+		this.quantity = quantity;
 	}
 
 	@Override
-	public String toString() {
-		return "OrderItem [id=" + id + ", order=" + order + ", item=" + item + ", itemAmount=" + itemAmount
-				+ ", itemTotal=" + itemTotal + "]";
+	public String toString()
+	{
+		return "OrderItem [id=" + id + ", order=" + order + ", itemSpec=" + itemSpec + ", quantity=" + quantity + "]";
 	}
 	
 }

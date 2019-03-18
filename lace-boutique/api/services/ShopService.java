@@ -1,11 +1,13 @@
 package api.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import api.sql.hibernate.dao.ShopDAO;
+import api.sql.hibernate.entities.Discount;
 import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.containers.ItemOptionsContainer;
 
@@ -32,6 +34,26 @@ public class ShopService {
 		}
 		
 		return itemOptionsList;
+	}
+	
+	public double applyDiscount(String discountCode, double totalPrice) {
+		Discount discount = ShopDAO.checkDiscountCode(discountCode.replace('"', ' ').trim());
+		System.out.println(discount.toString());
+		if (discount != null) {
+			Date date = new Date();
+			if (date.before(discount.getValidFrom()) || date.after(discount.getValidTo()) ) {
+				return 0.00;
+			}
+			if (discount.getMinSpend() > totalPrice) {
+				return 0.00;
+			}
+			if (discount.isFreeDelivery()) {
+				return 9999.99;
+			} else {
+				return discount.getAmountOff();
+			}
+		}
+		return 0.0;
 	}
 	
 }

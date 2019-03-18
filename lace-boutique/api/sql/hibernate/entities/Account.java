@@ -36,6 +36,9 @@ public class Account {
 	@Column(name = "gender")
 	private String gender;
 	
+	@Column(name = "phone_number")
+	private String phoneNumber;
+	
 	@Column(name = "date_of_birth")
 	@Temporal(TemporalType.DATE)
 	private Calendar dateOfBirth;
@@ -64,133 +67,173 @@ public class Account {
 	@Column(name = "logged_from")
 	private String loggedFrom;
 
-	public int getId() {
+	public int getId()
+	{
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(int id)
+	{
 		this.id = id;
 	}
 
-	public String getTitle() {
+	public String getTitle()
+	{
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public void setTitle(String title)
+	{
 		this.title = title;
 	}
 
-	public String getFirstName() {
+	public String getFirstName()
+	{
 		return firstName;
 	}
 
-	public void setFirstName(String firstName) {
+	public void setFirstName(String firstName)
+	{
 		this.firstName = firstName;
 	}
 
-	public String getLastName() {
+	public String getLastName()
+	{
 		return lastName;
 	}
 
-	public void setLastName(String lastName) {
+	public void setLastName(String lastName)
+	{
 		this.lastName = lastName;
 	}
 
-	public String getEmailAddress() {
+	public String getEmailAddress()
+	{
 		return emailAddress;
 	}
 
-	public void setEmailAddress(String emailAddress) {
+	public void setEmailAddress(String emailAddress)
+	{
 		this.emailAddress = emailAddress;
 	}
 
-	public String getGender() {
+	public String getGender()
+	{
 		return gender;
 	}
 
-	public void setGender(String gender) {
+	public void setGender(String gender)
+	{
 		this.gender = gender;
 	}
 
-	public Calendar getDateOfBirth() {
+	public String getPhoneNumber()
+	{
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber)
+	{
+		this.phoneNumber = phoneNumber;
+	}
+
+	public Calendar getDateOfBirth()
+	{
 		return dateOfBirth;
 	}
 
-	public void setDateOfBirth(Calendar dateOfBirth) {
+	public void setDateOfBirth(Calendar dateOfBirth)
+	{
 		this.dateOfBirth = dateOfBirth;
 	}
 
-	public String getPassword() {
+	public String getPassword()
+	{
 		return password;
 	}
 
-	public void setPassword(String password) {
+	public void setPassword(String password)
+	{
 		this.password = password;
 	}
 
-	public String getSalesInfo() {
+	public String getSalesInfo()
+	{
 		return salesInfo;
 	}
 
-	public void setSalesInfo(String salesInfo) {
+	public void setSalesInfo(String salesInfo)
+	{
 		this.salesInfo = salesInfo;
 	}
 
-	public String getNewStuffInfo() {
+	public String getNewStuffInfo()
+	{
 		return newStuffInfo;
 	}
 
-	public void setNewStuffInfo(String newStuffInfo) {
+	public void setNewStuffInfo(String newStuffInfo)
+	{
 		this.newStuffInfo = newStuffInfo;
 	}
 
-	public boolean isNewsletter() {
+	public boolean isNewsletter()
+	{
 		return newsletter;
 	}
 
-	public void setNewsletter(boolean newsletter) {
+	public void setNewsletter(boolean newsletter)
+	{
 		this.newsletter = newsletter;
 	}
 
-	public Timestamp getCreatedOn() {
+	public Timestamp getCreatedOn()
+	{
 		return createdOn;
 	}
 
-	public void setCreatedOn(Timestamp createdOn) {
+	public void setCreatedOn(Timestamp createdOn)
+	{
 		this.createdOn = createdOn;
 	}
 
-	public String getCreatedFrom() {
+	public String getCreatedFrom()
+	{
 		return createdFrom;
 	}
 
-	public void setCreatedFrom(String createdFrom) {
+	public void setCreatedFrom(String createdFrom)
+	{
 		this.createdFrom = createdFrom;
 	}
 
-	public Timestamp getLastLogged() {
+	public Timestamp getLastLogged()
+	{
 		return lastLogged;
 	}
 
-	public void setLastLogged(Timestamp lastLogged) {
+	public void setLastLogged(Timestamp lastLogged)
+	{
 		this.lastLogged = lastLogged;
 	}
 
-	public String getLoggedFrom() {
+	public String getLoggedFrom()
+	{
 		return loggedFrom;
 	}
 
-	public void setLoggedFrom(String loggedFrom) {
+	public void setLoggedFrom(String loggedFrom)
+	{
 		this.loggedFrom = loggedFrom;
 	}
 
 	@Override
-	public String toString() {
-		return "Account [id=" + id + ", title=" + title + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", emailAddress=" + emailAddress + ", gender=" + gender + ", dateOfBirth=" + dateOfBirth
-				+ ", password=" + password + ", salesInfo=" + salesInfo + ", newStuffInfo=" + newStuffInfo
-				+ ", newsletter=" + newsletter + ", createdOn=" + createdOn + ", createdFrom=" + createdFrom
-				+ ", lastLogged=" + lastLogged + ", loggedFrom=" + loggedFrom + "]";
+	public String toString()
+	{
+		return "Account [id=" + id + ", title=" + title + ", firstName=" + firstName + ", lastName=" + lastName + ", emailAddress=" + emailAddress + ", gender="
+			+ gender + ", phoneNumber=" + phoneNumber + ", dateOfBirth=" + dateOfBirth + ", password=" + password + ", salesInfo=" + salesInfo
+			+ ", newStuffInfo=" + newStuffInfo + ", newsletter=" + newsletter + ", createdOn=" + createdOn + ", createdFrom=" + createdFrom + ", lastLogged="
+			+ lastLogged + ", loggedFrom=" + loggedFrom + "]";
 	}
 	
 }

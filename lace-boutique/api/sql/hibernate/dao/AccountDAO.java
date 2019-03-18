@@ -2,6 +2,8 @@ package api.sql.hibernate.dao;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
@@ -12,6 +14,7 @@ import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Address;
 import api.sql.hibernate.entities.Cart;
 import api.sql.hibernate.entities.CartItem;
+import api.sql.hibernate.entities.OrderDetails;
 
 public class AccountDAO extends HibernateDAO{
 	
@@ -43,6 +46,18 @@ public class AccountDAO extends HibernateDAO{
 		};
 		Session session = Api.getSessionFactory().getCurrentSession();
 		return (Account) d.query(session, query);
+	}
+	
+	@Transactional
+	public static Address saveNewAddress(Address address) {
+		Api.getHibernateQuery().saveOrUpdateObject(address);
+		return address;
+	}
+	
+	@Transactional
+	public static OrderDetails saveOrderDetails(OrderDetails orderDetails) {
+		Api.getHibernateQuery().saveOrUpdateObject(orderDetails);
+		return orderDetails;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -126,4 +141,5 @@ public class AccountDAO extends HibernateDAO{
         	Api.getHibernateQuery().deleteObject(cartItems.get(0));
         }
 	}
+	
 }
