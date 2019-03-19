@@ -34,10 +34,9 @@ public class Order {
 	@Column(name = "order_total")
 	private double orderTotal;
 	
-//	@OneToOne
-//	@JoinColumn(name = "order_status_id")
-	@Column(name = "order_status_id")
-	private int orderStatusId;
+	@OneToOne
+	@JoinColumn(name = "order_status_id")
+	private OrderStatus orderStatus;
 	
 	@Column(name = "order_type")
 	private String orderType;
@@ -91,14 +90,14 @@ public class Order {
 		this.orderTotal = orderTotal;
 	}
 
-	public int getOrderStatusId()
+	public OrderStatus getOrderStatus()
 	{
-		return orderStatusId;
+		return orderStatus;
 	}
 
-	public void setOrderStatusId(int orderStatusId)
+	public void setOrderStatus(OrderStatus orderStatus)
 	{
-		this.orderStatusId = orderStatusId;
+		this.orderStatus = orderStatus;
 	}
 
 	public String getOrderType()
@@ -155,7 +154,7 @@ public class Order {
 	public String toString()
 	{
 		return "Order [id=" + id + ", account=" + account + ", orderDetails=" + orderDetails + ", address=" + address + ", orderTotal=" + orderTotal
-			+ ", orderStatusId=" + orderStatusId + ", orderType=" + orderType + ", deliveryMethod=" + deliveryMethod + ", paymentToken=" + paymentToken
+			+ ", orderStatus=" + orderStatus + ", orderType=" + orderType + ", deliveryMethod=" + deliveryMethod + ", paymentToken=" + paymentToken
 			+ ", chargeId=" + chargeId + "]";
 	}
 	

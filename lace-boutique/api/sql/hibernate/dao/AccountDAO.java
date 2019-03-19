@@ -15,6 +15,7 @@ import api.sql.hibernate.entities.Address;
 import api.sql.hibernate.entities.Cart;
 import api.sql.hibernate.entities.CartItem;
 import api.sql.hibernate.entities.OrderDetails;
+import api.sql.hibernate.entities.OrderItem;
 
 public class AccountDAO extends HibernateDAO{
 	
@@ -58,6 +59,36 @@ public class AccountDAO extends HibernateDAO{
 	public static OrderDetails saveOrderDetails(OrderDetails orderDetails) {
 		Api.getHibernateQuery().saveOrUpdateObject(orderDetails);
 		return orderDetails;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public static List<api.sql.hibernate.entities.Order> getOrdersByAccount(Account account) {
+		DAOQuery query = (session)->{
+			Criteria criteria = session.createCriteria(api.sql.hibernate.entities.Order.class);
+			criteria.createAlias("account", "account");
+			criteria.add(Restrictions.eq("account.id", account.getId()));
+			
+			List<api.sql.hibernate.entities.Order> orders = criteria.list();
+			return orders;		
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (List<api.sql.hibernate.entities.Order>) d.query(session, query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public static List<OrderItem> getOrderItemsByOrder(api.sql.hibernate.entities.Order order) {
+		DAOQuery query = (session)->{
+			Criteria criteria = session.createCriteria(OrderItem.class);
+			criteria.createAlias("order", "order");
+			criteria.add(Restrictions.eq("order.id", order.getId()));
+			
+			List<OrderItem> orderItems = criteria.list();
+			return orderItems;		
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (List<OrderItem>) d.query(session, query);
 	}
 	
 	@SuppressWarnings("unchecked")

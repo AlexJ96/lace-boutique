@@ -44,6 +44,7 @@
 		
 		<mapping class="api.sql.hibernate.entities.Order" />
 		<mapping class="api.sql.hibernate.entities.OrderItem" />
+		<mapping class="api.sql.hibernate.entities.OrderStatus" />
 		<mapping class="api.sql.hibernate.entities.OrderDetails" />
 		<mapping class="api.sql.hibernate.entities.Discount" />
 		
