@@ -23,7 +23,6 @@ public class OrderItem {
 	private Order order;
 
 	@OneToOne
-	@JoinColumn(name = "item_spec_id")
 	private ItemSpec itemSpec;
 	
 	@Column(name = "quantity")

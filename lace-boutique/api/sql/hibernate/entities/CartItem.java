@@ -1,6 +1,6 @@
 package api.sql.hibernate.entities;
 
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,7 +29,6 @@ public class CartItem {
 	private Cart cart;
 
 	@OneToOne
-	@JoinColumn(name = "item_spec_id")
 	private ItemSpec itemSpec;
 	
 	@Column(name = "quantity")

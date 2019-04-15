@@ -39,7 +39,6 @@ public class WishlistItem {
 	
 	
 	@OneToOne
-	@JoinColumn(name = "item_spec_id")
 	private ItemSpec itemSpec;
 
 	

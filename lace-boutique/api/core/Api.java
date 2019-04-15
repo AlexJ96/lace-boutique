@@ -4,7 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.transaction.Transactional;
+
+import org.bson.types.ObjectId;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 
 import api.endpoint.EndPoint;
 import api.endpoint.endpoints.AccountEndPoint;
@@ -16,6 +22,7 @@ import api.endpoint.endpoints.TestEndPoint;
 import api.services.AccountService;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.HibernateSession;
+import api.sql.hibernate.dao.DAOQuery;
 import api.sql.hibernate.dao.ShopDAO;
 import api.sql.hibernate.entities.Brand;
 import api.sql.hibernate.entities.Colour;
@@ -53,18 +60,11 @@ public class Api {
 		initializeEndPoints();
 		initializeHibernateSession();
 		
-		//AccountService accountService = new AccountService();
-		
-//		accountService.unsubscribeToNewsletter("alex_football_2k8@hotmail.co.uk");
-		
-//		accountService.beginPasswordReset("alex_football_2k8@hotmail.co.uk");
-		
-		//accountService.confirmPasswordReset("xVia43h-8iTITVHe-XCwpcTM", "Test123!");
-		
 		/*
 		 * Test Cases
 		 */
 		//populateMockDatabase();
+		//new EmailService().testEmail();
 		
 		//Order order = (Order) hibernateQuery.getObject(Order.class, 1);
 		//List<OrderItem> orderItems = AccountDAO.getOrderItemsByOrder(order);
@@ -79,7 +79,6 @@ public class Api {
 //		emailService.sendNewAccountRegistrationEmail(account);
 //		emailService.sendResetPasswordEmail(account, "o1mf9fnafnan-9fd9fid9fid-fdk9fka9k");
 //		emailService.sendPasswordChangedEmail(account, "fiajdofjadojfiajfiodajfoiajdiofjaiofdaiojf");
-		
 	}
 	
 	private static void initializeEndPoints() {
@@ -293,6 +292,20 @@ public class Api {
 			
 	static void joinTest(){
 		
+	}
+	
+	
+	static void itemTest(){
+		List<ItemSpec> itemSpecList = ShopDAO.getSpecsForItem(1);
+		System.out.println(itemSpecList.size());
+		for (ItemSpec itemSpec : itemSpecList) {
+			System.out.println("Associated Images: " + itemSpec.getItemImages().size());
+			for(ItemImage ii : itemSpec.getItemImages()){
+				System.out.println(
+						"IS.Id: " + itemSpec.getId() + ", IS.Colour: " +itemSpec.getColour().getId() + ", IS.Item: " + itemSpec.getItem().getId() + ", "
+								+ "II.Id: " + ii.getId() + ", II.Colour: " + ii.getColour().getId() + ", II.Item: " + ii.getItem().getId() );
+			}
+		}
 	}
 
 	/**

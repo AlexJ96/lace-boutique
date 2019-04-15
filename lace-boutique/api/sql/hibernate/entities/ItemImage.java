@@ -1,10 +1,16 @@
 package api.sql.hibernate.entities;
 
+import java.io.Serializable;
+
 import javax.persistence.*;
+
+import org.hibernate.annotations.NaturalId;
 
 @Entity
 @Table(name = "item_image")
-public class ItemImage {
+@Embeddable
+public class ItemImage implements Serializable{
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -13,10 +19,12 @@ public class ItemImage {
 
 	@OneToOne
 	@JoinColumn(name = "item_id")
+	@NaturalId
 	private Item item;
 
 	@ManyToOne
 	@JoinColumn(name = "colour_id")
+	@NaturalId
 	private Colour colour;
 
 	@Column(name = "url")
@@ -24,7 +32,7 @@ public class ItemImage {
 	
 	@Column(name = "default_image")
 	private boolean defaultImage;
-
+	
 	public int getId() {
 		return id;
 	}
