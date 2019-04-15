@@ -13,6 +13,7 @@ import api.services.OrderService;
 import api.services.TokenService;
 import api.services.WishlistService;
 import api.sql.hibernate.entities.Account;
+import api.sql.hibernate.entities.Address;
 import api.sql.hibernate.entities.Cart;
 import api.sql.hibernate.entities.CartItem;
 import api.sql.hibernate.entities.ItemSpec;
@@ -69,6 +70,25 @@ public class AccountEndPoint implements EndPoint {
 				Account account = gson.fromJson(object, Account.class);
 				
 			    return Utils.getJsonBuilder().toJson(accountService.getAddressesForAccount(account));
+			});
+			
+			spark.post("/address-update", (request, response) -> {
+				JsonObject object = new JsonParser().parse(request.body()).getAsJsonObject();
+				
+				Address address = gson.fromJson(object, Address.class);
+				
+			    return Utils.getJsonBuilder().toJson(accountService.saveOrUpdateAddress(address));
+			});
+			
+			spark.post("/address-add", (request, response) -> {
+				JsonObject object = new JsonParser().parse(request.body()).getAsJsonObject();
+
+				Account account = gson.fromJson(object.get("Account"), Account.class);
+				Address address = gson.fromJson(object.get("Address"), Address.class);
+				
+				address.setAccount(account);
+				
+			    return Utils.getJsonBuilder().toJson(accountService.saveOrUpdateAddress(address));
 			});
 			
 			spark.post("/wishlist-add", (request, response) -> {
@@ -147,6 +167,13 @@ public class AccountEndPoint implements EndPoint {
 					return Utils.getJsonBuilder().toJson(newToken);
 				}
 				return Utils.getJsonBuilder().toJson(orderService.confirmOrder(request.body()));
+			});
+			
+			spark.post("/orders", (request, response) -> {
+				JsonObject object = new JsonParser().parse(request.body()).getAsJsonObject();
+				Account account = gson.fromJson(object, Account.class);
+				
+				return Utils.getJsonBuilder().toJson(accountService.getOrders(account));
 			});
 			
 		});

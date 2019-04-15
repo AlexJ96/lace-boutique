@@ -8,36 +8,41 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "brands")
-public class Brand {
+@Table(name = "order_status")
+public class OrderStatus {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name = "id")
 	private int id;
-	
-	@Column(name = "brand")
-	private String brand;
 
-	public int getId() {
+	@Column(name = "status")
+	private String status;
+
+	public int getId()
+	{
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(int id)
+	{
 		this.id = id;
 	}
 
-	public String getBrand() {
-		return brand;
+	public String getStatus()
+	{
+		return status;
 	}
 
-	public void setBrand(String brand) {
-		this.brand = brand;
+	public void setStatus(String status)
+	{
+		this.status = status;
 	}
 
 	@Override
-	public String toString() {
-		return "Brand [id=" + id + ", brand=" + brand + "]";
+	public String toString()
+	{
+		return "OrderStatus [id=" + id + ", status=" + status + "]";
 	}
-
+	
 }

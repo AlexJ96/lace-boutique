@@ -69,8 +69,6 @@ public class ShopEndPoint implements EndPoint {
 			    if (StringUtils.isNotBlank(category)) {
 			    	categoryList.add(category);
 			    }
-			    
-			    System.out.println(Utils.getJsonFieldAsString(jobject, "Size"));
 
 				List<String> sizesList = new ArrayList();
 			    String sizes = Utils.getJsonFieldAsString(jobject, "Size");
@@ -99,8 +97,21 @@ public class ShopEndPoint implements EndPoint {
 			    	}
 			    }
 			    
+			    List<String> typeList = new ArrayList();
+			    String types = Utils.getJsonFieldAsString(jobject, "Type");
+			    if (StringUtils.isNotBlank(types)) {
+			    	String[] typeArray = types.split(",");
+			    	for (String type : typeArray) {
+			    		typeList.add(type);
+			    	}
+			    }
+			    
 			    if (!categoryList.isEmpty()) {
 			    	filters.put("CATEGORY", categoryList);
+			    }
+			    
+			    if (!typeList.isEmpty()) {
+			    	filters.put("TYPES", typeList);
 			    }
 			    
 			    if (!sizesList.isEmpty()) {
@@ -180,8 +191,21 @@ public class ShopEndPoint implements EndPoint {
 			    	}
 			    }
 			    
+			    List<String> typesList = new ArrayList();
+			    String types = Utils.getJsonFieldAsString(jobject, "Type");
+			    if (StringUtils.isNotBlank(types)) {
+			    	String[] typesArray = types.split(",");
+			    	for (String type : typesArray) {
+			    		typesList.add(type);
+			    	}
+			    }
+			    
 			    if (!categoryList.isEmpty()) {
 			    	filters.put("CATEGORY", categoryList);
+			    }
+			    
+			    if (!typesList.isEmpty()) {
+			    	filters.put("TYPES", typesList);
 			    }
 			    
 			    if (!sizesList.isEmpty()) {

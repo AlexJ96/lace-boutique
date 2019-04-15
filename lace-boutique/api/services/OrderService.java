@@ -27,6 +27,7 @@ import api.sql.hibernate.entities.CartItem;
 import api.sql.hibernate.entities.Order;
 import api.sql.hibernate.entities.OrderDetails;
 import api.sql.hibernate.entities.OrderItem;
+import api.sql.hibernate.entities.OrderStatus;
 import api.utils.Utils;
 
 public class OrderService {
@@ -90,7 +91,7 @@ public class OrderService {
 		order.setOrderTotal(Double.valueOf(totalPrice));
 		order.setDeliveryMethod(postageType);
 		order.setOrderType(orderType);
-		order.setOrderStatusId(1);
+		order.setOrderStatus(getDefaultOrderStatus());
 		order.setPaymentToken(paymentObject.get("id").toString().replace('"', ' ').trim());
 		order.setChargeId(charge.getId());
 		
@@ -135,6 +136,10 @@ public class OrderService {
 	
 	private boolean saveOrder(Order order) {
 		return hibernateQuery.saveOrUpdateObject(order);
+	}
+	
+	private OrderStatus getDefaultOrderStatus() {
+		return (OrderStatus) hibernateQuery.getObject(OrderStatus.class, 1);
 	}
 	
 	private Charge createCharge(String paymentSourceId) {

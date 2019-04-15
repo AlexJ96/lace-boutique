@@ -41,6 +41,7 @@ public class HibernateQuery {
 		} catch (Exception e) {
 			rollBackTransaction();
 			System.out.println(e.getMessage());
+			return false;
 		} finally {
 			closeSession();
 		}

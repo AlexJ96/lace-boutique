@@ -1,6 +1,5 @@
 package api.sql.hibernate.entities;
 
-import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 
@@ -45,6 +44,9 @@ public class Item {
 	//Maybe change to Category Table
 	@Column(name = "category")
 	private String category;
+	
+	@Column(name = "type")
+	private String type;
 	
 	@Column(name = "created")
 	@Temporal(TemporalType.DATE)
@@ -106,10 +108,18 @@ public class Item {
 		this.category = category;
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 	@Override
 	public String toString() {
 		return "Item [id=" + id + ", name=" + name + ", description=" + description + ", price=" + price
-				+ ", salePrice=" + salePrice + ", brand=" + brand + ", category=" + category + "]";
+				+ ", salePrice=" + salePrice + ", brand=" + brand + ", category=" + category + ", type=" + type + "]";
 	}
 	
 }

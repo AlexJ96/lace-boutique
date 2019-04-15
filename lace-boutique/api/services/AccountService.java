@@ -1,6 +1,7 @@
 package api.services;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -11,7 +12,10 @@ import api.sql.hibernate.dao.AccountDAO;
 import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Address;
 import api.sql.hibernate.entities.Cart;
+import api.sql.hibernate.entities.Order;
+import api.sql.hibernate.entities.OrderItem;
 import api.sql.hibernate.entities.Wishlist;
+import api.sql.hibernate.entities.containers.OrdersContainer;
 import api.utils.Responses;
 import api.utils.SecureUtils;
 import api.utils.StringUtils;
@@ -62,9 +66,33 @@ public class AccountService {
 	    }
 	}
 	
+	/**
+	 * Gets Address For Account
+	 * @param account
+	 * @return
+	 */
 	public List<Address> getAddressesForAccount(Account account) {
 		return AccountDAO.getAddressesForAccount(account);
 	}
+	
+	/**
+	 * Get's orders (container) order with items from order
+	 * @param account
+	 * @return
+	 */
+	public List<OrdersContainer> getOrders(Account account) {
+		List<Order> ordersForAccount = AccountDAO.getOrdersByAccount(account);
+		List<OrdersContainer> ordersContainerList = new ArrayList<OrdersContainer>();
+		
+		for (Order order : ordersForAccount) {
+			List<OrderItem> itemsForOrder = AccountDAO.getOrderItemsByOrder(order);
+			OrdersContainer ordersContainer = new OrdersContainer(order, itemsForOrder);
+			ordersContainerList.add(ordersContainer);
+		}
+		
+		return ordersContainerList;
+	}
+	
 	
 	/**
 	 * Creates wishlist for account upon account creation
@@ -145,6 +173,15 @@ public class AccountService {
 	 */
 	private boolean saveAccount(Account account) {
 		return hibernateQuery.saveOrUpdateObject(account);
+	}
+	
+	/**
+	 * Save or Update Address
+	 * @param address
+	 * @return
+	 */
+	public boolean saveOrUpdateAddress(Address address) {
+		return hibernateQuery.saveOrUpdateObject(address);
 	}
 	
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -27,7 +29,73 @@ import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.Size;
 import api.utils.StringUtils;
 
-public class ShopDAO extends HibernateDAO{
+public class ShopDAO extends HibernateDAO {
+	
+	@Transactional
+	public static Item saveItem(Item item) {
+		DAOQuery query = (session)->{
+			int id = (int) session.save(item);
+			session.flush();
+			return (Item) session.get(Item.class, id);
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (Item) d.query(session, query);
+	}
+	
+	@Transactional
+	public static ItemImage saveItemImage(ItemImage itemImage) {
+		DAOQuery query = (session)->{
+			int id = (int) session.save(itemImage);
+			session.flush();
+			return (ItemImage) session.get(ItemImage.class, id);
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (ItemImage) d.query(session, query);
+	}
+	
+	@Transactional
+	public static ItemSpec saveItemSpec(ItemSpec itemSpec) {
+		DAOQuery query = (session)->{
+			int id = (int) session.save(itemSpec);
+			session.flush();
+			return (ItemSpec) session.get(ItemSpec.class, id);
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (ItemSpec) d.query(session, query);
+	}
+	
+	@Transactional
+	public static Colour saveColour(Colour colour) {
+		DAOQuery query = (session)->{
+			int id = (int) session.save(colour);
+			session.flush();
+			return (Colour) session.get(Colour.class, id);
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (Colour) d.query(session, query);
+	}
+	
+	@Transactional
+	public static Brand saveBrand(Brand brand) {
+		DAOQuery query = (session)->{
+			int id = (int) session.save(brand);
+			session.flush();
+			return (Brand) session.get(Brand.class, id);
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (Brand) d.query(session, query);
+	}
+	
+	@Transactional
+	public static Size saveSize(Size size) {
+		DAOQuery query = (session)->{
+			int id = (int) session.save(size);
+			session.flush();
+			return (Size) session.get(Size.class, id);
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (Size) d.query(session, query);
+	}
 
 	@SuppressWarnings("unchecked")
 	public static List<Item> getAllItems() {
@@ -65,6 +133,7 @@ public class ShopDAO extends HibernateDAO{
 		return (List<Item>) d.query(session, query);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static List<Item> filterItems(Map<String, String> filter) {
 		DAOQuery query = (session)->{
 			List<Item> brandAndCategory = filterItemTable(filter);
@@ -176,6 +245,7 @@ public class ShopDAO extends HibernateDAO{
 			Criteria criteria = session.createCriteria(Item.class);
 			String brand = filter.containsKey("Brand") ? filter.get("Brand") : null;
 			String category = filter.containsKey("Category") ? filter.get("Category") : null;
+			String type = filter.containsKey("Type") ? filter.get("Type") : null;
 			
 			if (StringUtils.isNotBlank(brand)) {
 				criteria.add(Restrictions.eq("brand", brand));
@@ -183,6 +253,10 @@ public class ShopDAO extends HibernateDAO{
 			
 			if (StringUtils.isNotBlank(category)) {
 				criteria.add(Restrictions.eq("category", category));
+			}
+			
+			if (StringUtils.isNotBlank(type)) {
+				criteria.add(Restrictions.eq("type", type));
 			}
 			
 			List<Item> items = criteria.list();
@@ -292,7 +366,7 @@ public class ShopDAO extends HibernateDAO{
 		DAOQuery query = (session)->{
 			Set<String> keys = filters.keySet();
 			for(String k : keys){
-				if(!StringUtils.equals(k, "SIZE", "CATEGORY", "COLOUR", "BRAND")){
+				if(!StringUtils.equals(k, "SIZE", "CATEGORY", "COLOUR", "BRAND", "TYPES")){
 					return null;
 				}
 			}
@@ -309,13 +383,20 @@ public class ShopDAO extends HibernateDAO{
 			
 			Criteria criteria = session.createCriteria(ItemSpec.class);
 			List<String> category = filters.get("CATEGORY");
+			List<String> type = filters.get("TYPES");
 			
 			criteria.createAlias("item", "item");
 			criteria.createAlias("size", "size");
 			criteria.createAlias("colour", "colour");
 			criteria.createAlias("item.brand", "brand");
 			
-			criteria.add(Restrictions.eq("item.category", category.get(0)));
+			if (category != null && !category.isEmpty()) {
+				criteria.add(Restrictions.eq("item.category", category.get(0)));
+			}
+			
+			if (type != null && !type.isEmpty()) {
+				criteria.add(Restrictions.in("item.type", type));
+			}
 			
 			if (brandIds != null && !brandIds.isEmpty()) {
 				criteria.add(Restrictions.in("brand.id", brandIds));
@@ -400,7 +481,7 @@ public class ShopDAO extends HibernateDAO{
 			
 			Set<String> keys = filters.keySet();
 			for(String k : keys){
-				if(!StringUtils.equals(k, "CATEGORY", "SIZE", "COLOUR", "BRAND")){
+				if(!StringUtils.equals(k, "CATEGORY", "SIZE", "COLOUR", "BRAND", "TYPES")){
 					return null;
 				}
 			}
@@ -417,13 +498,20 @@ public class ShopDAO extends HibernateDAO{
 			
 			Criteria criteria = session.createCriteria(ItemSpec.class);
 			List<String> category = filters.get("CATEGORY");
+			List<String> type = filters.get("TYPES");
 			
 			criteria.createAlias("item", "item");
 			criteria.createAlias("size", "size");
 			criteria.createAlias("colour", "colour");
 			criteria.createAlias("item.brand", "brand");
 			
-			criteria.add(Restrictions.eq("item.category", category.get(0)));
+			if (category != null && !category.isEmpty()) {
+				criteria.add(Restrictions.eq("item.category", category.get(0)));
+			}
+			
+			if (type != null && !type.isEmpty()) {
+				criteria.add(Restrictions.in("item.type", type));
+			}
 			
 			List<String> sizes = filters.get("SIZE");
 			if(sizes != null && !sizes.isEmpty()){
@@ -504,6 +592,23 @@ public class ShopDAO extends HibernateDAO{
 			try {
 				brandFilters = dtoList.getDTOList(FilterDTO.class, brandFilterResult);
 				result.put("BRAND_FILTERS", brandFilters);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+			
+			ProjectionList p4=Projections.projectionList();
+			p4.add(Projections.groupProperty("item.type"));
+			p4.add(ProjectionsExtension.countDistinct("item.id"));
+			
+			criteria.setProjection(null);
+			criteria.setProjection(p4);
+			
+			List<Object[]> typeFilterResult = criteria.list();
+			List<FilterDTO> typeFilters = null;
+			try {
+				typeFilters = dtoList.getDTOList(FilterDTO.class, typeFilterResult);
+				result.put("TYPE_FILTERS", typeFilters);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
