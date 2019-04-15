@@ -6,8 +6,13 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Random;
 
+import javax.transaction.Transactional;
+
 import org.bson.types.ObjectId;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 
 import api.endpoint.EndPoint;
 import api.endpoint.endpoints.AccountEndPoint;
@@ -18,6 +23,8 @@ import api.services.TokenService;
 import api.services.WishlistService;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.HibernateSession;
+import api.sql.hibernate.dao.DAOQuery;
+import api.sql.hibernate.dao.ShopDAO;
 import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Brand;
 import api.sql.hibernate.entities.Colour;
@@ -84,7 +91,7 @@ public class Api {
 		
 //		hibernateQuery.saveOrUpdateObject(account);
 		
-		
+		itemTest();
 		/*
 		 * Test Cases
 		 */
@@ -181,6 +188,20 @@ public class Api {
 			
 	static void joinTest(){
 		
+	}
+	
+	
+	static void itemTest(){
+		List<ItemSpec> itemSpecList = ShopDAO.getSpecsForItem(1);
+		System.out.println(itemSpecList.size());
+		for (ItemSpec itemSpec : itemSpecList) {
+			System.out.println("Associated Images: " + itemSpec.getItemImages().size());
+			for(ItemImage ii : itemSpec.getItemImages()){
+				System.out.println(
+						"IS.Id: " + itemSpec.getId() + ", IS.Colour: " +itemSpec.getColour().getId() + ", IS.Item: " + itemSpec.getItem().getId() + ", "
+								+ "II.Id: " + ii.getId() + ", II.Colour: " + ii.getColour().getId() + ", II.Item: " + ii.getItem().getId() );
+			}
+		}
 	}
 
 }

@@ -31,4 +31,9 @@ public class ItemOptionsContainer {
 		this.itemSpecs = itemSpecs;
 	}
 	
+	@Override
+	public String toString(){
+		return "ItemOptionsContainer [colour="+ color + ", itemSpecs=" + itemSpecs + "]";
+	}
+	
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import api.sql.hibernate.dao.ShopDAO;
 import api.sql.hibernate.entities.Discount;
+import api.sql.hibernate.entities.ItemImage;
 import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.containers.ItemOptionsContainer;
 
@@ -18,6 +19,10 @@ public class ShopService {
 		Map<String, ItemOptionsContainer> itemSpecMap = new HashMap<String, ItemOptionsContainer>();
 		
 		for (ItemSpec itemSpec : itemSpecList) {
+			
+			for(ItemImage ii : itemSpec.getItemImages()){
+				System.out.println(ii.getId() + ", " +itemSpec.getColour().getId() + ", " + itemSpec.getItem().getId() + ", " + ii.getUrl());
+			}
 			if (itemSpecMap.containsKey(itemSpec.getColour().getColour())) {
 				ItemOptionsContainer itemOptionsContainer = itemSpecMap.get(itemSpec.getColour().getColour());
 				itemOptionsContainer.getItemSpecs().add((itemSpec));

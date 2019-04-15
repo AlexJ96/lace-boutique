@@ -2,10 +2,16 @@ package api.sql.hibernate.entities;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Where;
+
+import api.sql.hibernate.dao.EntityDAO;
 
 @Entity
 @Table(name = "item_spec")
@@ -34,24 +40,6 @@ public class ItemSpec implements Serializable{
 	@ManyToOne
 	@JoinColumn(name = "colour_id")
 	private Colour colour;
-	
-	
-	@OneToMany(fetch = FetchType.EAGER)
-	@JoinColumns({
-        @JoinColumn(name = "item_id", referencedColumnName = "id"),
-        @JoinColumn(name = "colour_id", referencedColumnName = "colour_id")
-	})
-	private List<ItemImage> itemImages;
-	
-	@OneToMany(fetch = FetchType.EAGER)
-	@JoinColumns({
-        @JoinColumn(name = "item_id", referencedColumnName = "id"),
-        @JoinColumn(name = "colour_id", referencedColumnName = "colour_id")
-	})
-	@Where(clause="default_image = '1'")
-	private List<ItemImage> defaultImage;
-	
-	
 	
 	public int getId() {
 		return id;
@@ -94,17 +82,17 @@ public class ItemSpec implements Serializable{
 	}
 	
 	public List<ItemImage> getItemImages(){
-		return this.itemImages;
+		return EntityDAO.getImageOf(this, false);
 	}
 
 	public List<ItemImage> getDefaultItemImages(){
-		return this.defaultImage;
+		return EntityDAO.getImageOf(this, true);
 	}
 	
 	@Override
 	public String toString() {
 		return "ItemSpec [id=" + id + ", item=" + item + ", size=" + size + ", quantity=" + quantity + ", colour="
-				+ colour + ", itemImages=" + itemImages + ", defaultImage=" + defaultImage + "]";
+				+ colour + "]";
 	}
 	
 }
