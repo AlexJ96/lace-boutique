@@ -111,6 +111,14 @@ public class AccountEndPoint implements EndPoint {
 				return Utils.getJsonBuilder().toJson(wishlistService.removeFromWishlist(account, wishlist, cart, object.get("WishlistItemId").getAsInt()));
 			});
 			
+			spark.post("/wishlist-reload", (request, response) -> {
+				JsonObject object = new JsonParser().parse(request.body()).getAsJsonObject();
+				
+				Wishlist wishlist = gson.fromJson(object.get("Wishlist"), Wishlist.class);
+				
+				return Utils.getJsonBuilder().toJson(wishlistService.getNoneRegisteredWishlist(wishlist));
+			});
+			
 			spark.post("/wishlist", (request, response) -> {
 				JsonObject object = new JsonParser().parse(request.body()).getAsJsonObject();
 				
@@ -174,6 +182,27 @@ public class AccountEndPoint implements EndPoint {
 				Account account = gson.fromJson(object, Account.class);
 				
 				return Utils.getJsonBuilder().toJson(accountService.getOrders(account));
+			});
+			
+			spark.post("/reset-password", (request, response) -> {
+				return Utils.getJsonBuilder().toJson(accountService.beginPasswordReset(request.body()));
+			});
+			
+			spark.post("/confirm-password-reset", (request, response) -> {
+				JsonObject object = new JsonParser().parse(request.body()).getAsJsonObject();
+				
+				String resetCode = object.get("ResetCode").getAsString();
+				String newPassword = object.get("NewPassword").getAsString();
+				
+				return Utils.getJsonBuilder().toJson(accountService.confirmPasswordReset(resetCode, newPassword));
+			});
+			
+			spark.post("/subscribe-newsletter", (request, response) -> {
+				return Utils.getJsonBuilder().toJson(accountService.subscribeToNewsletter(request.body()));
+			});
+			
+			spark.post("/unsubscribe-newsletter", (request, response) -> {
+				return Utils.getJsonBuilder().toJson(accountService.unsubscribeToNewsletter(request.body()));
 			});
 			
 		});

@@ -29,14 +29,20 @@ public class ShopEndPoint implements EndPoint {
 	public void configure(Service spark, String basePath) {
 		spark.path(basePath + "/shop", () -> {
 			spark.get("/all-items", (request, response) -> {
-				List<Item> shopItems = ShopDAO.getAllItems();
-				System.out.println(shopItems.size());
-				return Utils.getJsonBuilder().toJson(shopItems);
+//				List<Item> shopItems = ShopDAO.getAllItems();
+//				System.out.println(shopItems.size());
+//				return Utils.getJsonBuilder().toJson(shopItems);
+				return "";
 			});
 			
 			spark.post("/item-spec", (request, response) -> {
 				JsonObject object = new JsonParser().parse(request.body()).getAsJsonObject();
 				return Utils.getJsonBuilder().toJson(shopService.getSpecsForItem(object.get("ItemId").getAsInt()));
+			});
+			
+			spark.post("/item-image-id", (request, response) -> {
+				JsonObject object = new JsonParser().parse(request.body()).getAsJsonObject();
+				return Utils.getJsonBuilder().toJson(shopService.getItemImageById(object.get("ItemImageId").getAsInt()));
 			});
 			
 			spark.post("/apply-discount", (request, response) -> {

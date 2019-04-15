@@ -41,6 +41,15 @@ public class ShopService {
 		return itemOptionsList;
 	}
 	
+	/**
+	 * Get's ItemImage for ID
+	 * @param itemImageId
+	 * @return
+	 */
+	public ItemImage getItemImageById(int itemImageId) {
+		return ShopDAO.getItemImageById(itemImageId);
+	}
+	
 	public double applyDiscount(String discountCode, double totalPrice) {
 		Discount discount = ShopDAO.checkDiscountCode(discountCode.replace('"', ' ').trim());
 		System.out.println(discount.toString());

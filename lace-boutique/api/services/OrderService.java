@@ -18,12 +18,14 @@ import com.stripe.exception.RateLimitException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 
+import api.mail.EmailService;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.dao.AccountDAO;
 import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Address;
 import api.sql.hibernate.entities.Cart;
 import api.sql.hibernate.entities.CartItem;
+import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.Order;
 import api.sql.hibernate.entities.OrderDetails;
 import api.sql.hibernate.entities.OrderItem;
@@ -35,6 +37,7 @@ public class OrderService {
 	private String STRIPE_API_KEY = "sk_test_PmT0QU17uI9pLou57Acf5kzv";
 	private Gson gson = new Gson();
 	private HibernateQuery hibernateQuery = new HibernateQuery();
+	private EmailService emailService = new EmailService();
 	
 	public boolean confirmOrder(String requestBody) {
 		JsonObject object = new JsonParser().parse(requestBody).getAsJsonObject();
@@ -72,15 +75,16 @@ public class OrderService {
 			address.setPostcode(Utils.getJsonFieldAsString(addressObject, "postcode"));
 			address = AccountDAO.saveNewAddress(address);
 		}
-		
-		System.out.println(requestBody);
 
 		Cart cart = gson.fromJson(object.get("cart"), Cart.class);
 	    String totalPrice = Utils.getJsonFieldAsString(object, "totalPrice");
+	    String totalPriceString = Utils.getJsonFieldAsString(object, "totalPriceString");
 	    String orderType = Utils.getJsonFieldAsString(object, "deliveryType");
 	    String postageType = Utils.getJsonFieldAsString(object, "postageType");
+	    
+	    int totalPriceInt = Integer.valueOf(totalPriceString);
 		
-		Charge charge = createCharge(paymentObject.get("id").toString().replace('"', ' ').trim());
+		Charge charge = createCharge(paymentObject.get("id").toString().replace('"', ' ').trim(), totalPriceInt);
 		
 		Order order = new Order();
 		if (orderDetails != null) 
@@ -99,14 +103,17 @@ public class OrderService {
 			return false;
 		}
 		
-		if (!completeOrder(order, cart)) {
+		if (!saveOrderItems(order, cart)) {
 			return false;
 		}
+		
+		List<OrderItem> itemsForOrder = AccountDAO.getOrderItemsByOrder(order);
+		emailService.sendOrderConfirmedEmail(order, itemsForOrder);
 		
 		return true;
 	}
 	
-	private boolean completeOrder(Order order, Cart cart) {
+	private boolean saveOrderItems(Order order, Cart cart) {
 		List<CartItem> cartItems = cart.getCartItems();
 		
 		for (CartItem cartItem : cartItems) {
@@ -117,9 +124,17 @@ public class OrderService {
 			if (!saveOrderItem(orderItem)) {
 				return false;
 			}
-			deleteCartItem(cartItem);
+			decreaseItemQuantity(cartItem);
+			if (cart.getId() != 0)
+				deleteCartItem(cartItem);
 		}
 		return true;
+	}
+	
+	private void decreaseItemQuantity(CartItem cartItem) {
+		ItemSpec itemSpec = cartItem.getItemSpec();
+		itemSpec.setQuantity(itemSpec.getQuantity() - cartItem.getQuantity());
+		hibernateQuery.saveOrUpdateObject(itemSpec);
 	}
 	
 	private void deleteCartItem(CartItem cartItem) {
@@ -142,13 +157,13 @@ public class OrderService {
 		return (OrderStatus) hibernateQuery.getObject(OrderStatus.class, 1);
 	}
 	
-	private Charge createCharge(String paymentSourceId) {
+	private Charge createCharge(String paymentSourceId, int totalPrice) {
 		Stripe.apiKey = STRIPE_API_KEY;
 
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("amount", 999);
+		params.put("amount", totalPrice);
 		params.put("currency", "gbp");
-		params.put("source", "tok_visa");
+		params.put("source", "tok_visa");//Replace with paymentSourceId when going live.
 		Charge charge = null;
 		try {
 			charge = Charge.create(params);

@@ -12,6 +12,8 @@ import org.hibernate.criterion.Restrictions;
 
 import api.core.Api;
 import api.sql.hibernate.entities.Account;
+import api.sql.hibernate.entities.Cart;
+import api.sql.hibernate.entities.CartItem;
 import api.sql.hibernate.entities.Colour;
 import api.sql.hibernate.entities.Item;
 import api.sql.hibernate.entities.ItemImage;
@@ -38,6 +40,32 @@ public class WishlistDAO extends HibernateDAO {
 	        return wishLists.get(0);
 		};
 		
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (Wishlist)d.query(session, query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public static Wishlist getNoneRegisteredWishlist(Wishlist wishlist) {
+		DAOQuery query = (session) -> {
+			List<WishlistItem> newWishlistItems = new ArrayList<WishlistItem>();
+			
+			for (WishlistItem wishlistItem : wishlist.getWishlistItem()) {
+				int itemSpecId = wishlistItem.getItemSpec().getId();
+				
+				Criteria criteria = session.createCriteria(ItemSpec.class);
+				criteria.add(Restrictions.eq("id", itemSpecId));
+				
+				List<ItemSpec> itemSpec = criteria.list();
+				if (!itemSpec.isEmpty()) {
+					wishlistItem.setItemSpec(itemSpec.get(0));
+				}
+				newWishlistItems.add(wishlistItem);
+			}
+			
+			wishlist.setWishlistItemList((ArrayList<WishlistItem>) newWishlistItems);
+			return wishlist;
+		};
 		Session session = Api.getSessionFactory().getCurrentSession();
 		return (Wishlist)d.query(session, query);
 	}
