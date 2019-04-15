@@ -23,6 +23,7 @@ public class CartService {
 	 */
 	public String addToCart(Account account, Wishlist wishlist, Cart cart, ItemSpec itemSpec, int quantity) {
 		CartItem cartItem = CartDAO.addToCart(cart, itemSpec, quantity);
+		System.out.println(cartItem);
 		String newToken;
 		if (cart.getId() == 0) {
 			boolean alreadyExists = false;

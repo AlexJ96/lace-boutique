@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bson.types.ObjectId;
 
+import api.sql.hibernate.dao.CartDAO;
 import api.sql.hibernate.dao.WishlistDAO;
 import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Cart;
@@ -73,6 +74,15 @@ public class WishlistService {
 			wishlist.setWishlistItemList(new ArrayList<WishlistItem>());
 		}
 		return wishlist;
+	}
+	
+	/**
+	 * Refreshes the cart object with all details
+	 * @param cart
+	 * @return
+	 */
+	public Wishlist getNoneRegisteredWishlist(Wishlist wishlist) {
+		return WishlistDAO.getNoneRegisteredWishlist(wishlist);
 	}
 	
 	

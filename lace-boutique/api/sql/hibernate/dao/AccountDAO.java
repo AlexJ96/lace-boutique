@@ -14,8 +14,10 @@ import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Address;
 import api.sql.hibernate.entities.Cart;
 import api.sql.hibernate.entities.CartItem;
+import api.sql.hibernate.entities.Newsletter;
 import api.sql.hibernate.entities.OrderDetails;
 import api.sql.hibernate.entities.OrderItem;
+import api.sql.hibernate.entities.PasswordReset;
 
 public class AccountDAO extends HibernateDAO{
 	
@@ -47,6 +49,32 @@ public class AccountDAO extends HibernateDAO{
 		};
 		Session session = Api.getSessionFactory().getCurrentSession();
 		return (Account) d.query(session, query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Newsletter getNewsletterByEmail(String email) {	
+		DAOQuery query = (session)->{
+			Criteria criteria = session.createCriteria(Newsletter.class);
+			criteria.add(Restrictions.eq("emailAddress", email));
+			
+			List<Newsletter> newsletters = criteria.list();
+			return newsletters.size() > 0 ? newsletters.get(0) : null;			
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (Newsletter) d.query(session, query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static PasswordReset getPasswordReset(String code) {	
+		DAOQuery query = (session)->{
+			Criteria criteria = session.createCriteria(PasswordReset.class);
+			criteria.add(Restrictions.eq("code", code));
+			
+			List<PasswordReset> passwordResets = criteria.list();
+			return passwordResets.size() > 0 ? passwordResets.get(0) : null;			
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (PasswordReset) d.query(session, query);
 	}
 	
 	@Transactional

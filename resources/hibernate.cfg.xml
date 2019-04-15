@@ -48,6 +48,10 @@
 		<mapping class="api.sql.hibernate.entities.OrderDetails" />
 		<mapping class="api.sql.hibernate.entities.Discount" />
 		
+		<mapping class="api.sql.hibernate.entities.PasswordReset" />
+		<mapping class="api.sql.hibernate.entities.Newsletter" />
+		<mapping class="api.sql.hibernate.entities.MiscPages" />
+		
 		<!-- <mapping class="api.sql.hibernate.entities.WorkStatus" />-->
 	</session-factory>
 </hibernate-configuration>

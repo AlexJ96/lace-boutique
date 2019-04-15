@@ -27,6 +27,7 @@ import api.sql.hibernate.entities.Item;
 import api.sql.hibernate.entities.ItemImage;
 import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.Size;
+import api.sql.hibernate.entities.containers.ItemDetailsContainer;
 import api.utils.StringUtils;
 
 public class ShopDAO extends HibernateDAO {
@@ -56,9 +57,9 @@ public class ShopDAO extends HibernateDAO {
 	@Transactional
 	public static ItemSpec saveItemSpec(ItemSpec itemSpec) {
 		DAOQuery query = (session)->{
-			int id = (int) session.save(itemSpec);
+			session.saveOrUpdate(itemSpec);
 			session.flush();
-			return (ItemSpec) session.get(ItemSpec.class, id);
+			return (ItemSpec) session.get(ItemSpec.class, itemSpec.getId());
 		};
 		Session session = Api.getSessionFactory().getCurrentSession();
 		return (ItemSpec) d.query(session, query);
@@ -96,15 +97,112 @@ public class ShopDAO extends HibernateDAO {
 		Session session = Api.getSessionFactory().getCurrentSession();
 		return (Size) d.query(session, query);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static ItemImage getItemImageById(int itemImageId) {
+		DAOQuery query = (session)-> {
+			Criteria criteria = session.createCriteria(ItemImage.class);
+			criteria.add(Restrictions.eq("id", itemImageId));
+			
+			List<ItemImage> itemImages = criteria.list();
+			return itemImages.size() > 0 ? itemImages.get(0) : null;
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (ItemImage) d.query(session, query);
+	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Item> getAllItems() {
+	public static List<Item> getAllItems(int pageNumber) {
 		DAOQuery query = (session)->{
 			Criteria criteria = session.createCriteria(Item.class);
+
+			int start = pageNumber * Api.getMaxRowCount();
+			System.out.println(start);
+			criteria.setMaxResults(Api.getMaxRowCount());
+			criteria.setFirstResult(start);
+			
 			return criteria.list();
 		};
 		Session session = Api.getSessionFactory().getCurrentSession();
 		return (List<Item>) d.query(session, query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Brand> getAllBrands() {
+		DAOQuery query = (session)->{
+			Criteria criteria = session.createCriteria(Brand.class);
+			
+			return criteria.list();
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (List<Brand>) d.query(session, query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Colour> getAllColours() {
+		DAOQuery query = (session)->{
+			Criteria criteria = session.createCriteria(Colour.class);
+			
+			return criteria.list();
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (List<Colour>) d.query(session, query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Brand getBrandById(int brandId) {
+		DAOQuery query = (session)->{
+			Criteria criteria = session.createCriteria(Brand.class);
+			criteria.add(Restrictions.eq("id", brandId));
+			
+			List<Brand> brandList = criteria.list();
+			
+			return brandList.size() > 0 ? brandList.get(0) : null;
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (Brand) d.query(session, query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Size> getAllSizes() {
+		DAOQuery query = (session)->{
+			Criteria criteria = session.createCriteria(Size.class);
+			
+			return criteria.list();
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (List<Size>) d.query(session, query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static ItemDetailsContainer getAllDetailsForItem(int itemId) {
+		DAOQuery query = (session)->{
+			Criteria criteria = session.createCriteria(Item.class);
+			criteria.add(Restrictions.eq("id", itemId));
+			List<Item> itemList = criteria.list();
+			
+			ItemDetailsContainer itemDetailsContainer = new ItemDetailsContainer();
+			itemDetailsContainer.setItem(itemList.get(0));
+			
+			criteria = session.createCriteria(ItemImage.class);
+			criteria.createAlias("item", "item");
+			criteria.add(Restrictions.eq("item.id", itemId));
+			List<ItemImage> itemImageList = criteria.list();
+
+			itemDetailsContainer.setItemImage(itemImageList);
+			
+			criteria = session.createCriteria(ItemSpec.class);
+			criteria.createAlias("item", "item");
+			criteria.add(Restrictions.eq("item.id", itemId));
+			List<ItemSpec> itemSpecList = criteria.list();
+
+			itemDetailsContainer.setItemSpec(itemSpecList);
+			
+			return itemDetailsContainer;
+			
+		};
+		Session session = Api.getSessionFactory().getCurrentSession();
+		return (ItemDetailsContainer) d.query(session, query);
 	}
 	
 	@SuppressWarnings("unchecked")

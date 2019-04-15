@@ -1,32 +1,28 @@
 package api.core;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Random;
 
-import org.bson.types.ObjectId;
 import org.hibernate.SessionFactory;
 
 import api.endpoint.EndPoint;
 import api.endpoint.endpoints.AccountEndPoint;
+import api.endpoint.endpoints.AdminEndPoint;
 import api.endpoint.endpoints.AuthToken;
+import api.endpoint.endpoints.MiscEndpoint;
 import api.endpoint.endpoints.ShopEndPoint;
 import api.endpoint.endpoints.TestEndPoint;
-import api.services.TokenService;
-import api.services.WishlistService;
+import api.services.AccountService;
 import api.sql.hibernate.HibernateQuery;
 import api.sql.hibernate.HibernateSession;
 import api.sql.hibernate.dao.ShopDAO;
-import api.sql.hibernate.entities.Account;
 import api.sql.hibernate.entities.Brand;
 import api.sql.hibernate.entities.Colour;
 import api.sql.hibernate.entities.Item;
 import api.sql.hibernate.entities.ItemImage;
 import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.Size;
-import api.sql.hibernate.entities.Wishlist;
 
 /**
  * Api Initializer - Sets up all API Endpoints
@@ -40,12 +36,15 @@ public class Api {
 	private static HibernateSession hibernateSession;
 	private static SessionFactory sessionFactory;
 	private static HibernateQuery hibernateQuery;
+	private static int MAX_ROW_COUNT = 15;
 	
 	private static EndPoint[] endPoints = { 
 			new TestEndPoint(), 
 			new AuthToken(),
 			new AccountEndPoint(),
-			new ShopEndPoint()
+			new ShopEndPoint(),
+			new AdminEndPoint(),
+			new MiscEndpoint()
 			};
 	private static String basePath = "/laceApi";
 
@@ -54,12 +53,33 @@ public class Api {
 		initializeEndPoints();
 		initializeHibernateSession();
 		
+		//AccountService accountService = new AccountService();
+		
+//		accountService.unsubscribeToNewsletter("alex_football_2k8@hotmail.co.uk");
+		
+//		accountService.beginPasswordReset("alex_football_2k8@hotmail.co.uk");
+		
+		//accountService.confirmPasswordReset("xVia43h-8iTITVHe-XCwpcTM", "Test123!");
 		
 		/*
 		 * Test Cases
 		 */
 		//populateMockDatabase();
-		//new EmailService().testEmail();
+		
+		//Order order = (Order) hibernateQuery.getObject(Order.class, 1);
+		//List<OrderItem> orderItems = AccountDAO.getOrderItemsByOrder(order);
+		
+		//EmailService emailService = new EmailService();
+		
+//		System.out.println(orderItems.get(0).toString());
+//		emailService.sendOrderConfirmedEmail(order, orderItems);
+//		emailService.sendOrderUpdatedEmail(order);
+		//emailService.sendOrderCancelledEmail(order);
+		
+//		emailService.sendNewAccountRegistrationEmail(account);
+//		emailService.sendResetPasswordEmail(account, "o1mf9fnafnan-9fd9fid9fid-fdk9fka9k");
+//		emailService.sendPasswordChangedEmail(account, "fiajdofjadojfiajfiodajfoiajdiofjaiofdaiojf");
+		
 	}
 	
 	private static void initializeEndPoints() {
@@ -273,6 +293,22 @@ public class Api {
 			
 	static void joinTest(){
 		
+	}
+
+	/**
+	 * @return the mAX_ROW_COUNT
+	 */
+	public static int getMaxRowCount()
+	{
+		return MAX_ROW_COUNT;
+	}
+
+	/**
+	 * @param mAX_ROW_COUNT the mAX_ROW_COUNT to set
+	 */
+	public void setMaxRowCount(int mAX_ROW_COUNT)
+	{
+		MAX_ROW_COUNT = mAX_ROW_COUNT;
 	}
 
 }

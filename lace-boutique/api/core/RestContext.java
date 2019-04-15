@@ -16,13 +16,22 @@ public class RestContext {
 
     private final String basePath;
     
+    /**
+     * Production API Url
+     */
+    //private final String url = "https://api.lace-boutique.uk:8080";
+    
+    /**
+     * Test API Url
+     */
     private final String url = "http://localhost:8080";
     
-    private final String[] unauthorizedEndPoints = { "/token/request-token", "/token/refresh-token", "/shop/getFilters", "/shop/getItems" };
+    private final String[] unauthorizedEndPoints = { "/token/request-token", "/token/refresh-token", "/shop/getFilters", "/shop/getItems", "/misc/get-page-content" };
 
     public RestContext(int port, String basePath) {
         this.basePath = basePath;
         spark = Service.ignite().port(port);
+        //spark.secure("C:/Users/Administrator/Downloads/selfsigned.jks", "laceboutique", null, null);
     }
 
     public void addEndpoint(EndPoint endpoint) {
@@ -49,6 +58,8 @@ public class RestContext {
             response.header("Access-Control-Allow-Headers", "Content-Type, LBT");
             
             boolean needsAuth = true;
+            
+//            System.out.println(request.url());
             
             for (String unauthorizedEndPoint : unauthorizedEndPoints) {
             	if (request.url().equalsIgnoreCase(url + basePath + unauthorizedEndPoint))

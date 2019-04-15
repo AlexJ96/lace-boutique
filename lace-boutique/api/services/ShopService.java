@@ -8,6 +8,7 @@ import java.util.Map;
 
 import api.sql.hibernate.dao.ShopDAO;
 import api.sql.hibernate.entities.Discount;
+import api.sql.hibernate.entities.ItemImage;
 import api.sql.hibernate.entities.ItemSpec;
 import api.sql.hibernate.entities.containers.ItemOptionsContainer;
 
@@ -34,6 +35,15 @@ public class ShopService {
 		}
 		
 		return itemOptionsList;
+	}
+	
+	/**
+	 * Get's ItemImage for ID
+	 * @param itemImageId
+	 * @return
+	 */
+	public ItemImage getItemImageById(int itemImageId) {
+		return ShopDAO.getItemImageById(itemImageId);
 	}
 	
 	public double applyDiscount(String discountCode, double totalPrice) {
